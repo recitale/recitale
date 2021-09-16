@@ -1,6 +1,7 @@
 {% if section.image.type == "video" %}
-{% set video = Video(section.image) %}
+{% set video = Video.get(link, section.image) %}
 {% set format = settings.ffmpeg.extension %}
+{% set vid = video.reencode((1280, 720)) %}
 {% else %}
 {% set image = Image.get(link, section.image) %}
 {% set caption = section.text %}
@@ -10,9 +11,9 @@
   {% endif %}
   <div class="bordered-picture baguette caption">
     {% if video %}
-    <img class="responsive-img lazy z-depth-2" data-original="{{ video.generate_thumbnail("2000") }}" alt="">
-    <video class="lazy responsive-video" id="{{ video }}" onclick="goFullscreen('{{ video }}');" poster="{{ video.generate_thumbnail("2000") }}" alt="" autoplay="autoplay" loop="loop" preload="auto" muted>
-      <source src="{{ video }}.{{ format }}" type="video/{{ format }}">
+    <img class="responsive-img lazy z-depth-2" data-original="{{ video.thumbnail((None, 2000)) }}" alt="">
+    <video class="lazy responsive-video" id="{{ vid }}" onclick="goFullscreen('{{ vid }}');" poster="{{ video.thumbnail((None, 2000)) }}" alt="" autoplay="autoplay" loop="loop" preload="auto" muted>
+      <source src="{{ vid }}" type="video/{{ format }}">
     </video>
     {% else %}
     <a href="{{ image.copy() }}" {% if caption %}data-caption="{{ caption }}"{% endif %}

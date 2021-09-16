@@ -4,9 +4,9 @@
 {% set pathstatic = "." %}
 {% endif %}
 {% if section.image.type == "video" %}
-{% set video = Video(section.image) %}
+{% set video = Video.get(link + "/" + pathstatic, section.image) %}
 {% set format = settings.ffmpeg.extension %}
-{{ video.copy() }}
+{% set vid = video.reencode((1280, 720)) %}
 {% else %}
 {% set image = Image.get(link + "/" + pathstatic, section.image) %}
 {% endif %}
@@ -14,7 +14,7 @@
     <div class="image">
         {% if video %}
         <video autoplay loop muted class="fillWidth responsive-video">
-          <source src="{{ pathstatic }}/{{ video }}.{{ format }}" type="video/{{ format}}">
+          <source src="{{ pathstatic }}/{{ vid }}" type="video/{{ format}}">
         </video>
         {% else %}
         <img  src="{{ pathstatic }}/{{ image.thumbnail((None, 800)) }}">

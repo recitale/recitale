@@ -1,7 +1,7 @@
 {% if section.image.type == "video" %}
 {% set format = settings.ffmpeg.extension %}
-{% set video = Video(section.image) %}
-{{ video.copy() }}
+{% set video = Video.get(link, section.image) %}
+{% set vid = video.reencode((1280, 720)) %}
 <section class="full-picture">
   <div class="video-container">
     {% if section.text %}
@@ -19,9 +19,9 @@
     </div>
     {% endif %}
     <video autoplay loop muted class="fillWidth">
-      <source src="{{ video }}.{{ format }}" type="video/{{ format }}">
+      <source src="{{ vid }}" type="video/{{ format }}">
     </video>
-    <img class="lazy fillWidth responsive-video" src="/../static/img/11-14.svg" data-src="{{ video.generate_thumbnail("2000") }}">
+    <img class="lazy fillWidth responsive-video" src="/../static/img/11-14.svg" data-src="{{ video.thumbnail((None, 2000)) }}">
   </div>
 </section>
 {% else %}

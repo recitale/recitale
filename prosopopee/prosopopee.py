@@ -24,6 +24,7 @@ from .utils import encrypt, rfc822, load_settings, CustomFormatter
 from .autogen import autogen
 from .__init__ import __version__
 from .image import ImageFactory
+from .video import VideoFactory
 
 
 def loglevel(string):
@@ -120,118 +121,7 @@ SETTINGS = {
 
 
 ImageFactory.global_options = SETTINGS["gm"]
-
-
-class Video:
-    base_dir = Path()
-    target_dir = Path()
-
-    def __init__(self, options):
-        if SETTINGS["ffmpeg"] is False:
-            logger.error(
-                "I couldn't find a binary to convert video and I ask to do so + abort"
-            )
-            sys.exit(1)
-
-        # assuming string
-        if not isinstance(options, dict):
-            options = {"name": options}
-        # used for caching, if it's modified -> regenerate
-        self.options = SETTINGS["ffmpeg"].copy()
-        self.options.update(options)
-
-    @property
-    def name(self):
-        return self.options["name"]
-
-    def ffmpeg(self, source, target, options):
-        if not options.get("resize"):
-            target = target + "." + options["extension"]
-        if not CACHE.needs_to_be_generated(source, target, options):
-            logger.info("Skipped: %s is already generated", source)
-            return
-
-        ffmpeg_switches = {
-            "source": source,
-            "target": target,
-            "loglevel": "-loglevel %s" % options["loglevel"],
-            "resolution": "-s %s" % options["resolution"],
-            "resize": "-vf scale=-1:%s" % options.get("resize"),
-            "vbitrate": "-b:v %s" % options["vbitrate"],
-            "abitrate": "-b:v %s" % options["abitrate"],
-            "format": "-f %s" % options["format"],
-            "binary": "%s" % options["binary"],
-            "video": "-c:v %s" % options["video"],
-            "audio": "-c:a %s" % options["audio"],
-            "other": "%s" % options["other"],
-        }
-
-        logger.info("Generation: %s", source)
-
-        if options.get("resize"):
-            command = (
-                "{binary} {loglevel} -i '{source}' {resize} -vframes 1 -y '{target}'"
-            )
-            command = command.format(**ffmpeg_switches)
-        else:
-            command = (
-                "{binary} {loglevel} -i '{source}' {video} {vbitrate} {other} {audio} "
-                "{abitrate} {resolution} {format} -y '{target}'"
-            )
-            command = command.format(**ffmpeg_switches)
-
-        print(command)
-
-        if os.system(command) != 0:
-            logger.error("%s command failed", ffmpeg_switches["binary"])
-            sys.exit(1)
-
-        CACHE.cache_picture(source, target, options)
-
-    def copy(self):
-        if not DEFAULTS["test"]:
-            source, target = (
-                self.base_dir.joinpath(self.name),
-                self.target_dir.joinpath(self.name),
-            )
-            options = self.options.copy()
-            self.ffmpeg(source, target, options)
-        return ""
-
-    def generate_thumbnail(self, gm_geometry):
-        thumbnail_name = ".".join(self.name.split(".")[:-1]) + "-%s.jpg" % gm_geometry
-        if not DEFAULTS["test"]:
-            source, target = (
-                self.base_dir.joinpath(self.name),
-                self.target_dir.joinpath(thumbnail_name),
-            )
-
-            options = self.options.copy()
-            options.update({"resize": gm_geometry})
-
-            self.ffmpeg(source, target, options)
-
-        return thumbnail_name
-
-    @property
-    def ratio(self):
-        if self.options["binary"] == "ffmpeg":
-            binary = "ffprobe"
-        else:
-            binary = "avprobe"
-        target = self.base_dir.joinpath(self.name)
-        command = (
-            binary
-            + " -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0"
-        )
-        command_list = command.split()
-        command_list.append(str(target))
-        out = subprocess.check_output(command_list)
-        width, height = out.decode("utf-8").split(",")
-        return float(width) / int(height)
-
-    def __repr__(self):
-        return self.name
+VideoFactory.global_options = SETTINGS["ffmpeg"]
 
 
 class Audio:
@@ -524,9 +414,6 @@ def __build_gallery(
     gallery_index_template = template.get_template("gallery-index.html")
     page_template = template.get_template("page.html")
 
-    Video.base_dir = Path(".").joinpath(gallery_path)
-    Video.target_dir = Path(".").joinpath("build", gallery_path)
-
     Audio.base_dir = Path(".").joinpath(gallery_path)
     Audio.target_dir = Path(".").joinpath("build", gallery_path)
     if gallery_settings.get("sections"):
@@ -542,7 +429,7 @@ def __build_gallery(
         settings=settings,
         gallery=gallery_settings,
         Image=ImageFactory,
-        Video=Video,
+        Video=VideoFactory,
         Audio=Audio,
         link=target_gallery_path,
         name=gallery_path.split("/", 1)[-1],
@@ -603,15 +490,12 @@ def build_index(
             sorted([x for x in galleries_cover if x != {}], key=lambda x: x["date"])
         )
 
-    Video.base_dir = Path(".").joinpath(gallery_path)
-    Video.target_dir = Path(".").joinpath("build", gallery_path)
-
     html = index_template.render(
         settings=settings,
         galleries=galleries_cover,
         sub_index=sub_index,
         Image=ImageFactory,
-        Video=Video,
+        Video=VideoFactory,
     ).encode("Utf-8")
 
     open(Path("build").joinpath(gallery_path, "index.html"), "wb").write(html)
@@ -780,6 +664,76 @@ def render_thumbnails(base):
         CACHE.cache_picture(base.filepath, str(filepath), params)
 
 
+def render_video(base):
+    logger.debug("(%s) Rendering thumbnails and reencodes", base.filepath)
+    basecmd = "{binary} -loglevel {loglevel} -y -i " + shlex.quote(str(base.filepath))
+
+    if base.reencodes:
+        reencodecmd = (
+            basecmd
+            + " -c:v {video} -b:v {vbitrate} {other} -c:a {audio} -b:a {abitrate} -f {format} "
+        )
+        for reencode in base.reencodes.values():
+            filepath = Path("build") / reencode.filepath
+            if not CACHE.needs_to_be_generated(
+                base.filepath, str(filepath), base.options
+            ):
+                continue
+
+            width, height = reencode.size
+            width = width if width else -1
+            height = height if height else -1
+            command = (
+                reencodecmd
+                + "-s "
+                + str(width)
+                + "x"
+                + str(height)
+                + " "
+                + shlex.quote(str(filepath))
+            )
+            command = command.format(**base.options)
+
+            if subprocess.run(shlex.split(command)).returncode != 0:
+                logger.error(
+                    "An error occured while rendering reencodes for %s", base.filepath
+                )
+                return
+
+            CACHE.cache_picture(base.filepath, str(filepath), base.options)
+
+    if not base.thumbnails:
+        return
+
+    thumbcmd = basecmd + " -vframes 1 "
+    for thumbnail in base.thumbnails.values():
+        filepath = Path("build") / thumbnail.filepath
+        if not CACHE.needs_to_be_generated(base.filepath, str(filepath), base.options):
+            continue
+
+        width, height = thumbnail.size
+        width = width if width else -1
+        height = height if height else -1
+        command = (
+            thumbcmd
+            + "-vf scale="
+            + str(width)
+            + ":"
+            + str(height)
+            + " "
+            + shlex.quote(filepath)
+        )
+
+        command = command.format(**base.options)
+        if subprocess.run(shlex.split(command)).returncode != 0:
+            logger.error(
+                "An error occured while rendering thumbnails for %s", base.filepath
+            )
+            return
+
+        CACHE.cache_picture(base.filepath, str(filepath), base.options)
+
+
 logger = logging.getLogger("prosopopee")
 
 
@@ -939,6 +893,9 @@ def main():
         if base_imgs:
             logger.info("Generating thumbnails...")
             pool.map(render_thumbnails, base_imgs)
+
+    for video in VideoFactory.base_vids.values():
+        render_video(video)
 
     CACHE.cache_dump()
 

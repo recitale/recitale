@@ -7,9 +7,9 @@
       {% for image in line %}
       {% set caption = image.text %}
       {% if image.type == "video" %}
-      {% set video = Video(image) %}
+      {% set video = Video.get(link, image) %}
       {% set format = settings.ffmpeg.extension %}
-      {{ video.copy() }}
+      {% set vid = video.reencode((1280, 720)) %}
       {% set ratio = video.ratio %}
       {% else %}
       {% set image = Image.get(link, image) %}
@@ -18,12 +18,12 @@
       <div class="picture caption" style="flex-grow: {{ ratio }}">
         {% if image.type == "video" %}
         {% if loop.length == 1 %}
-        <img class="lazy" data-src="{{ video.generate_thumbnail("1366") }}" src="./../static/img/11-14.svg" alt="">
+        <img class="lazy" data-src="{{ video.thumbnail((None, 1366)) }}" src="./../static/img/11-14.svg" alt="">
         {% else %}
-        <img class="lazy" data-src="{{ video.generate_thumbnail("600") }}" src="./../static/img/11-14.svg" alt="">
+        <img class="lazy" data-src="{{ video.thumbnail((None, 600)) }}" src="./../static/img/11-14.svg" alt="">
         {% endif %}
-        <video class="lazy" id="{{ video }}.{{ format }}" onclick="goFullscreen('{{ video }}.{{ format }}');" data-src="{{ video }}.{{ format }}" data-poster="{{ video.generate_thumbnail("600") }}" alt="" loop="loop" preload="none" autoplay muted {% if image.controls %}controls="true"{% endif %}>
-          <source data-src="{{ video }}.{{ format }}" type="video/{{ format }}">
+        <video class="lazy" id="{{ vid }}" onclick="goFullscreen('{{ vid }}');" data-src="{{ vid }}" data-poster="{{ video.thumbnail((None, 600)) }}" alt="" loop="loop" preload="none" autoplay muted {% if image.controls %}controls="true"{% endif %}>
+          <source data-src="{{ vid }}" type="video/{{ format }}">
         </video>
         {% if caption %}
         <div class="caption__overlay">

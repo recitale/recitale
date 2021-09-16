@@ -2,10 +2,11 @@
   <div class="parallax">
     {% if section.image.type == "video" %}
     {% set format = settings.ffmpeg.extension %}
-    {% set video = Video(section.image) %}
-    <img class="lazy" src="{{ video.generate_thumbnail("720") }}">
+    {% set video = Video.get(link, section.image) %}
+    {% set vid = video.reencode((1280, 720)) %}
+    <img class="lazy" src="{{ video.thumbnail((None, 720)) }}">
     <video autoplay loop muted class="fillWidth">
-      <source src="{{ video }}.{{ format }}" type="video/{{ format }}">
+      <source src="{{ vid }}" type="video/{{ format }}">
     </video>
     {% else %}
     {% set image = Image.get(link, section.image) %}

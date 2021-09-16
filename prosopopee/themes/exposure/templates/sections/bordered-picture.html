@@ -2,15 +2,15 @@
 <div class="bg-section" style="background: {{ section.background }};">
   {% endif %}
   {% if section.image.type == "video" %}
-  {% set video = Video(section.image) %}
+  {% set video = Video.get(link, section.image) %}
   {% set format = settings.ffmpeg.extension %}
   {% set caption = section.text %}
-  {{ video.copy() }}
+  {% set vid = video.reencode((1280, 720)) %}
   <section class="bordered-picture baguette" style="position: relative;">
     <div class="caption">
-        <img class="lazy" data-src="{{ video.generate_thumbnail("2000") }}" src="./../static/img/11-14.svg" alt="">
-        <video class="lazy" id="{{ video }}.{{ format }}" onclick="goFullscreen('{{ video }}.{{ format }}');" data-src="{{ video }}.{{ format }}" data-poster="{{ video.generate_thumbnail("2000") }}" alt="" loop="loop" preload="none" autoplay muted {% if video.controls %}controls="true"{% endif %}>
-        <source src="{{ video }}.{{ format }}" type="video/{{ format }}">
+        <img class="lazy" data-src="{{ video.thumbnail((None, 2000)) }}" src="./../static/img/11-14.svg" alt="">
+        <video class="lazy" id="{{ vid }}" onclick="goFullscreen('{{ vid }}');" data-src="{{ vid }}" data-poster="{{ video.thumbnail((None, 2000)) }}" alt="" loop="loop" preload="none" autoplay muted {% if video.controls %}controls="true"{% endif %}>
+        <source src="{{ vid }}" type="video/{{ format }}">
       </video>
       {% if caption %}
       <div class="caption__overlay">
