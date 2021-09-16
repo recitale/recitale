@@ -1,5 +1,4 @@
 {% set extension = settings.ffmpeg_audio.extension %}
-{% set audio = Audio(section.image) %}
 {% if extension == "mp3" %}
 {% set format = "mpeg" %}
 {% else %}
@@ -10,8 +9,9 @@
 {% else %}
 {% set pathstatic = "." %}
 {% endif %}
-{{ audio.copy() }}
-<h4>{% if section.title %}{{ section.title }}{% else %}{{ audio }}{% endif %}</h4>
+{% set audio = Audio.get(link + "/" + pathstatic, section.image) %}
+{% set aud = audio.reencode() %}
+<h4>{% if section.title %}{{ section.title }}{% else %}{{ aud }}{% endif %}</h4>
 <audio controls preload=none>
-  <source src="{{ pathstatic }}/{{ audio }}.{{ extension }}" type="audio/{{ format }}">
+  <source src="{{ pathstatic }}/{{ aud }}" type="audio/{{ format }}">
 </audio>

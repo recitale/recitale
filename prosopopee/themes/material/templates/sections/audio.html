@@ -1,14 +1,14 @@
-{% set audio = Audio(section.image) %}
+{% set audio = Audio.get(link, section.image) %}
 {% set extension = settings.ffmpeg_audio.extension %}
 {% if extension == "mp3" %}
 {% set format = "mpeg" %}
 {% else %}
 {% set format = extension %}
 {% endif %}
-{{ audio.copy() }}
+{% set aud = audio.reencode() %}
 <div class="audio-player" {% if section.color %} style="background: {{ section.color  }};"{% endif %}>
-  <h2>{% if section.title %}{{ section.title }}{% else %}{{ audio }}{% endif %}</h2>
+  <h2>{% if section.title %}{{ section.title }}{% else %}{{ aud }}{% endif %}</h2>
 <audio controls preload=none>
-  <source src="{{ audio }}.{{ extension }}" type="audio/{{ format }}">
+  <source src="{{ aud }}" type="audio/{{ format }}">
 </audio>
 </div>

@@ -25,6 +25,7 @@ from .autogen import autogen
 from .__init__ import __version__
 from .image import ImageFactory
 from .video import VideoFactory
+from .audio import AudioFactory
 
 
 def loglevel(string):
@@ -120,70 +121,9 @@ SETTINGS = {
 }
 
 
+AudioFactory.global_options = SETTINGS["ffmpeg_audio"]
 ImageFactory.global_options = SETTINGS["gm"]
 VideoFactory.global_options = SETTINGS["ffmpeg"]
-
-
-class Audio:
-    base_dir = Path()
-    target_dir = Path()
-
-    def __init__(self, options):
-        if SETTINGS["ffmpeg"] is False:
-            logger.error(
-                "I couldn't find a binary to convert audio and I ask to do so + abort"
-            )
-            sys.exit(1)
-
-        # assuming string
-        if not isinstance(options, dict):
-            options = {"name": options}
-        # used for caching, if it's modified -> regenerate
-        self.options = SETTINGS["ffmpeg_audio"].copy()
-        self.options.update(options)
-
-    @property
-    def name(self):
-        return self.options["name"]
-
-    def ffmpeg(self, source, target, options):
-        target = target + "." + options["extension"]
-        if not CACHE.needs_to_be_generated(source, target, options):
-            logger.info("Skipped: %s is already generated", source)
-            return
-
-        ffmpeg_switches = {
-            "source": source,
-            "target": target,
-            "binary": "%s" % options["binary"],
-            "loglevel": "-loglevel %s" % options["loglevel"],
-            "audio": "-c:a %s" % options["audio"],
-        }
-
-        logger.info("Generation: %s", source)
-
-        command = "{binary} {loglevel} -i '{source}' {audio} -y '{target}'".format(
-            **ffmpeg_switches
-        )
-        print(command)
-        if os.system(command) != 0:
-            logger.error("%s command failed", ffmpeg_switches["binary"])
-            sys.exit(1)
-
-        CACHE.cache_picture(source, target, options)
-
-    def copy(self):
-        if not DEFAULTS["test"]:
-            source, target = (
-                self.base_dir.joinpath(self.name),
-                self.target_dir.joinpath(self.name),
-            )
-            options = self.options.copy()
-            self.ffmpeg(source, target, options)
-        return ""
-
-    def __repr__(self):
-        return self.name
 
 
 class TCPServerV4(socketserver.TCPServer):
@@ -414,8 +354,6 @@ def __build_gallery(
     gallery_index_template = template.get_template("gallery-index.html")
     page_template = template.get_template("page.html")
 
-    Audio.base_dir = Path(".").joinpath(gallery_path)
-    Audio.target_dir = Path(".").joinpath("build", gallery_path)
     if gallery_settings.get("sections"):
         for section in gallery_settings["sections"]:
             if section["type"] not in gallery_settings:
@@ -430,7 +368,7 @@ def __build_gallery(
         gallery=gallery_settings,
         Image=ImageFactory,
         Video=VideoFactory,
-        Audio=Audio,
+        Audio=AudioFactory,
         link=target_gallery_path,
         name=gallery_path.split("/", 1)[-1],
     ).encode("Utf-8")
@@ -721,13 +659,39 @@ def render_video(base):
             + ":"
             + str(height)
             + " "
-            + shlex.quote(filepath)
+            + shlex.quote(str(filepath))
         )
 
         command = command.format(**base.options)
         if subprocess.run(shlex.split(command)).returncode != 0:
             logger.error(
                 "An error occured while rendering thumbnails for %s", base.filepath
+            )
+            return
+
+        CACHE.cache_picture(base.filepath, str(filepath), base.options)
+
+
+def reencode_audio(base):
+    logger.debug("(%s) Rendering reencodes", base.filepath)
+    basecmd = "{binary} -loglevel {loglevel} -i " + shlex.quote(str(base.filepath))
+    basecmd = basecmd + " -c:a {audio} -y "
+
+    if not base.reencodes:
+        return
+
+    for reencode in base.reencodes.values():
+        filepath = Path("build") / reencode.filepath
+        if not CACHE.needs_to_be_generated(base.filepath, str(filepath), base.options):
+            logger.info("Skipped: %s is already generated", reencode.filepath)
+            return
+
+        command = basecmd + shlex.quote(filepath)
+        command = command.format(**base.options)
+
+        if subprocess.run(shlex.split(command)).returncode != 0:
+            logger.error(
+                "An error occured while rendering reencodes for %s", base.filepath
             )
             return
 
@@ -896,6 +860,9 @@ def main():
 
     for video in VideoFactory.base_vids.values():
         render_video(video)
+
+    for audio in AudioFactory.base_audios.values():
+        reencode_audio(audio)
 
     CACHE.cache_dump()
 
