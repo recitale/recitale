@@ -7,7 +7,11 @@
 {% endif %}
 <meta property="og:title" content="{{ gallery.title }}"/>
 {% if gallery.cover %}
+{% if gallery.cover.type == "video" %}
+{% set cover = Video.get(link + "/" + pathstatic, gallery.cover) %}
+{% else %}
 {% set cover = Image.get(link + "/" + pathstatic, gallery.cover) %}
+{% endif %}
 <meta property="og:image" content="{{ absolute_url }}{{ cover.thumbnail((None, 900)) }}"/>
 {% endif %}
 <meta property="og:site_name" content="{{ settings.title }}"/>
