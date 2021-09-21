@@ -643,7 +643,8 @@ def render_video(base):
     if not base.thumbnails:
         return
 
-    thumbcmd = basecmd + " -vframes 1 "
+    uncached = []
+    command = ""
     for thumbnail in base.thumbnails.values():
         filepath = Path("build") / thumbnail.filepath
         if not CACHE.needs_to_be_generated(base.filepath, str(filepath), base.options):
@@ -653,22 +654,28 @@ def render_video(base):
         width = width if width else -1
         height = height if height else -1
         command = (
-            thumbcmd
-            + "-vf scale="
+            command
+            + " -frames:v 1 -vf scale="
             + str(width)
             + ":"
             + str(height)
             + " "
             + shlex.quote(str(filepath))
         )
+        uncached.append(thumbnail)
 
-        command = command.format(**base.options)
-        if subprocess.run(shlex.split(command)).returncode != 0:
-            logger.error(
-                "An error occured while rendering thumbnails for %s", base.filepath
-            )
-            return
+    if not uncached:
+        return
 
+    command = basecmd + command
+    command = command.format(**base.options)
+    if subprocess.run(shlex.split(command)).returncode != 0:
+        logger.error(
+            "An error occured while rendering thumbnails for %s", str(base.filepath)
+        )
+        return
+
+    for thumbnail in uncached:
         CACHE.cache_picture(base.filepath, str(filepath), base.options)
 
 
