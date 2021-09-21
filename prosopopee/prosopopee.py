@@ -844,34 +844,35 @@ def main():
     # treads')
     jobs = args.jobs if args.cmd else None
 
-    with Pool(jobs) as pool:
-        # Pool splits the iterable into pre-defined chunks which are then assigned to processes.
-        # There is no other scheduling in play after that. This is an issue when chunks are
-        # outrageously unbalanced in terms of CPU time which happens when most galleries are
-        # already built and thus hit the cache but not some, in which case, only a few processes
-        # will run and not the full CPU power will be used, wasting time.
-        # In order to optimize this, a first very quick run through the list of images is done
-        # to list only those which actually need to be generated.
-        # In the following implementation, the first pool.map function will be slightly
-        # unbalanced because some images will hit the cache directly while some won't at all,
-        # iterating over all the thumbnails it needs to create. But it is **much** less
-        # unbalanced than sending to render_thumbnails all images even those which would hit the
-        # cache. After the first pool.map, the second will only contain images with at least one
-        # thumbnail to create.
-        logger.info("Generating list of thumbnails to create...")
-        base_imgs = pool.map(noncached_images, ImageFactory.base_imgs.values())
-        base_imgs = [img for img in base_imgs if img]
-        if base_imgs:
-            logger.info("Generating thumbnails...")
-            pool.map(render_thumbnails, base_imgs)
+    try:
+        with Pool(jobs) as pool:
+           # Pool splits the iterable into pre-defined chunks which are then assigned to processes.
+            # There is no other scheduling in play after that. This is an issue when chunks are
+            # outrageously unbalanced in terms of CPU time which happens when most galleries are
+            # already built and thus hit the cache but not some, in which case, only a few processes
+            # will run and not the full CPU power will be used, wasting time.
+            # In order to optimize this, a first very quick run through the list of images is done
+            # to list only those which actually need to be generated.
+            # In the following implementation, the first pool.map function will be slightly
+            # unbalanced because some images will hit the cache directly while some won't at all,
+            # iterating over all the thumbnails it needs to create. But it is **much** less
+            # unbalanced than sending to render_thumbnails all images even those which would hit the
+            # cache. After the first pool.map, the second will only contain images with at least one
+            # thumbnail to create.
+            logger.info("Generating list of thumbnails to create...")
+            base_imgs = pool.map(noncached_images, ImageFactory.base_imgs.values())
+            base_imgs = [img for img in base_imgs if img]
+            if base_imgs:
+                logger.info("Generating thumbnails...")
+                pool.map(render_thumbnails, base_imgs)
 
-    for video in VideoFactory.base_vids.values():
-        render_video(video)
+        for video in VideoFactory.base_vids.values():
+            render_video(video)
 
-    for audio in AudioFactory.base_audios.values():
-        reencode_audio(audio)
-
-    CACHE.cache_dump()
+        for audio in AudioFactory.base_audios.values():
+            reencode_audio(audio)
+    finally:
+        CACHE.cache_dump()
 
 
 if __name__ == "__main__":
