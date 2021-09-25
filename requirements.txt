@@ -5,3 +5,4 @@ ruamel.yaml
 future
 pillow>=6
 imagesize
+tqdm

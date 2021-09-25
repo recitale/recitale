@@ -609,9 +609,10 @@ def render_video(base):
     if base.reencodes:
         reencodecmd = (
             basecmd
-            + " -c:v {video} -b:v {vbitrate} {other} -c:a {audio} -b:a {abitrate} -f {format} "
+            + " -stats -c:v {video} -b:v {vbitrate} {other} -c:a {audio} -b:a {abitrate} -f {format} "
         )
         for reencode in base.reencodes.values():
+            logger.info("Reencoding (%s)" % base.filepath)
             filepath = Path("build") / reencode.filepath
             if not CACHE.needs_to_be_generated(
                 base.filepath, str(filepath), base.options
@@ -681,13 +682,16 @@ def render_video(base):
 
 def reencode_audio(base):
     logger.debug("(%s) Rendering reencodes", base.filepath)
-    basecmd = "{binary} -loglevel {loglevel} -i " + shlex.quote(str(base.filepath))
+    basecmd = "{binary} -loglevel {loglevel} -stats -i " + shlex.quote(
+        str(base.filepath)
+    )
     basecmd = basecmd + " -c:a {audio} -y "
 
     if not base.reencodes:
         return
 
     for reencode in base.reencodes.values():
+        logger.info("Reencoding (%s)" % base.filepath)
         filepath = Path("build") / reencode.filepath
         if not CACHE.needs_to_be_generated(base.filepath, str(filepath), base.options):
             logger.info("Skipped: %s is already generated", reencode.filepath)
