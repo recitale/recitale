@@ -12,8 +12,9 @@ import struct
 
 from babel.core import default_locale
 from babel.dates import format_date
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager, Process
 from PIL import Image, ImageOps, JpegImagePlugin, ImageFile
+from tqdm import tqdm
 
 from path import Path
 
@@ -292,7 +293,12 @@ def process_directory(
     )
     sub_page_galleries_cover = []
 
-    for subgallery in sub_galleries:
+    for subgallery in tqdm(
+        sub_galleries,
+        desc="Generating subgalleries (%s)" % gallery_name,
+        leave=False,
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} | ETA: {remaining}",
+    ):
         sub_page_galleries_cover.append(
             process_directory(
                 subgallery.name, settings, subgallery_templates, gallery_path
@@ -476,7 +482,10 @@ def noncached_images(base):
         filepath = Path("build") / thumbnail.filepath
 
         if CACHE.needs_to_be_generated(base.filepath, str(filepath), params):
+            noncached_images.queue.put(1)
             return base
+
+    noncached_images.queue.put(1)
 
 
 def render_thumbnails(base):
@@ -600,6 +609,7 @@ def render_thumbnails(base):
             thumbnail.size,
         )
         CACHE.cache_picture(base.filepath, str(filepath), params)
+    render_thumbnails.queue.put(1)
 
 
 def render_video(base):
@@ -809,7 +819,11 @@ def main():
 
     logger.info("Building galleries...")
 
-    for gallery in galleries_dirs:
+    for gallery in tqdm(
+        galleries_dirs,
+        desc="Building galleries",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} | ETA: {remaining}",
+    ):
         front_page_galleries_cover.append(
             process_directory(gallery.normpath(), settings, templates)
         )
@@ -849,8 +863,40 @@ def main():
     jobs = args.jobs if args.cmd else None
 
     try:
-        with Pool(jobs) as pool:
-           # Pool splits the iterable into pre-defined chunks which are then assigned to processes.
+        def set_queue(initargs):
+            queue, funcs = initargs
+            for func in funcs:
+                func.queue = queue
+
+        pbar_queue = Manager().Queue()
+
+        with Pool(
+            jobs,
+            initializer=set_queue,
+            initargs=((pbar_queue, [noncached_images, render_thumbnails]),),
+        ) as pool:
+
+            def handle_pbar(desc, queue, pbar_len):
+                with tqdm(
+                    total=pbar_len,
+                    desc=desc,
+                    bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} | ETA: {remaining}",
+                ) as pbar:
+                    while queue.get():
+                        pbar.update()
+
+            logger.info("Generating list of thumbnails to create...")
+
+            pbar = Process(
+                target=handle_pbar,
+                args=(
+                    "Filtering cached thumbnails",
+                    pbar_queue,
+                    len(ImageFactory.base_imgs),
+                ),
+            )
+            pbar.start()
+            # Pool splits the iterable into pre-defined chunks which are then assigned to processes.
             # There is no other scheduling in play after that. This is an issue when chunks are
             # outrageously unbalanced in terms of CPU time which happens when most galleries are
             # already built and thus hit the cache but not some, in which case, only a few processes
@@ -863,18 +909,34 @@ def main():
             # unbalanced than sending to render_thumbnails all images even those which would hit the
             # cache. After the first pool.map, the second will only contain images with at least one
             # thumbnail to create.
-            logger.info("Generating list of thumbnails to create...")
             base_imgs = pool.map(noncached_images, ImageFactory.base_imgs.values())
+            pbar_queue.put(None)
+            pbar.join()
             base_imgs = [img for img in base_imgs if img]
+
             if base_imgs:
                 logger.info("Generating thumbnails...")
-                pool.map(render_thumbnails, base_imgs)
+                pbar = Process(
+                    target=handle_pbar,
+                    args=("Generating thumbnails", pbar_queue, len(base_imgs)),
+                )
+                pbar.start()
+                base_imgs = pool.map(render_thumbnails, base_imgs)
+                pbar_queue.put(None)
+                pbar.join()
 
-        for video in VideoFactory.base_vids.values():
-            render_video(video)
+        if len(VideoFactory.base_vids):
+            for video in tqdm(
+                VideoFactory.base_vids.values(),
+                desc="Generating video thumbnails and resizes",
+            ):
+                render_video(video)
 
-        for audio in AudioFactory.base_audios.values():
-            reencode_audio(audio)
+        if len(AudioFactory.base_audios):
+            for audio in tqdm(
+                AudioFactory.base_audios.values(), desc="Generating audio reencodes"
+            ):
+                reencode_audio(audio)
     finally:
         CACHE.cache_dump()
 
