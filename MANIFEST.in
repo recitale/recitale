@@ -1,12 +1,13 @@
 include *.txt
 include *.md
+recursive-include pics *.png
 include tox.ini
 include LICENSE
 include logo.png
 
 recursive-include docs *.rst
-recursive-include prosopopee/themes *
-recursive-include pics *.png
 
-recursive-exclude example *
+graft prosopopee/themes
+
+prune example
 exclude example
