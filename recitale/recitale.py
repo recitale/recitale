@@ -719,7 +719,7 @@ def reencode_audio(base):
         CACHE.cache_picture(base.filepath, str(filepath), base.options)
 
 
-logger = logging.getLogger("prosopopee")
+logger = logging.getLogger("recitale")
 
 
 def main():
@@ -857,7 +857,7 @@ def main():
         logger.info("Success: HTML file building without error")
         sys.exit(0)
 
-    # If prosopopee is started without any argument, 'build' is assumed but the jobs parameter
+    # If recitale is started without any argument, 'build' is assumed but the jobs parameter
     # is not part of the namespace, so set its default to None (or 'number of available CPU
     # treads')
     jobs = args.jobs if args.cmd else None

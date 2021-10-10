@@ -9,7 +9,7 @@ from zlib import crc32
 from .utils import remove_superficial_options
 
 
-logger = logging.getLogger("prosopopee." + __name__)
+logger = logging.getLogger("recitale." + __name__)
 
 
 class VideoCommon:

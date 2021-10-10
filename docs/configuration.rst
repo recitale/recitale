@@ -27,7 +27,7 @@ It is possible to add a menu to your homepage that links to static pages. To do 
     menu:
       - about: "About"
       - first_gallery: "My first gallery"
-      - http://twitter.com: "Twitter"
+      - https://twitter.com: "Twitter"
 
 For example, this could be the content of `settings.yaml` in `about` folder::
 
@@ -92,7 +92,7 @@ Any of thumbnail creation settings can be customized on a per-image basis (eithe
 Video converter
 ~~~~~~~~~~~~~~~
 
-Prosopopée can use ffmpeg or libav and each can be configured if needed::
+recitale can use ffmpeg or libav and each can be configured if needed::
 
   title: Gallery
   settings:
@@ -162,7 +162,7 @@ After that you will be able to choose between dark theme or light theme when vis
 Themes
 ~~~~~~
 
-Prosopopée supports different themes. As for now, only 3 themes are available:
+recitale supports different themes. As for now, only 3 themes are available:
 
  * the default one called "exposure"
  * "material" based on materialcss
@@ -179,13 +179,13 @@ To specify the theme, add the "theme" key in your "settings" key or your
 Licence
 ~~~~~~~
 
-By default Prosopopée uses CC-BY-SA for all the content. If you want to use another licence,
+By default recitale uses CC-BY-SA for all the content. If you want to use another licence,
 you need to add a "licence" key in **root** settings.yaml. For example::
  
   title: Gallery
   licence:
     name: WTFPL
-    url: "http://www.wtfpl.net/txt/copying/"
+    url: "https://www.wtfpl.net/txt/copying/"
 
 Share
 ~~~~~
@@ -194,7 +194,7 @@ If you want to enable content sharing on social networks, add the "share" key in
 
   title: Gallery
   share: true
-  url: "http://prosopopee.com"
+  url: "https://recitale.org"
 
 By default you can share on facebook, twitter, pinterest, google+.
 
@@ -205,7 +205,7 @@ To activate the RSS feed you need to add the "rss" key in **root** settings.yaml
 
   title: Gallery
   rss: true
-  url: "http://prosopopee.com"
+  url: "https://recitale.org"
 
 Open Graph Meta
 ~~~~~~~~~~~~~~~
@@ -213,13 +213,13 @@ Open Graph Meta
 To activate the Open Graph Meta you need to add the "og" key in **root** settings.yaml::
 
   title: Sur les chemins
-  url: "http://prosopopee.com"
+  url: "https://recitale.org"
   settings:
     og: true
 
 You can also specify a description and a language ("lang" key) for a gallery.
 
-For more information about Open Graph http://ogp.me/
+For more information about Open Graph https://ogp.me/
 
 Deployment
 ~~~~~~~~~~
@@ -238,7 +238,7 @@ If you want to configure the deployment of your website with rsync::
 Reverse order
 ~~~~~~~~~~~~~
 
-Normally Prosopopee builds the gallery index in anti-chronological. If you want to have it in chronological order, use the "reverse" key::
+Normally recitale builds the gallery index in anti-chronological. If you want to have it in chronological order, use the "reverse" key::
 
     settings:
       reverse: true
@@ -259,7 +259,7 @@ If you want to protect all the website by password::
 Date locale
 ~~~~~~~~~~~
 
-By default, Prosopopee uses locale from LC_TIME environment variable to generate human-readable date.
+By default, recitale uses locale from LC_TIME environment variable to generate human-readable date.
 
 For example, if your LC_TIME equals to en_US.utf8, then you get "23 August 2020" as date on the gallery tile. If you are using ru_RU.utf8, then you get "23 Августа 2020".
 

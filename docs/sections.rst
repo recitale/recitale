@@ -18,7 +18,7 @@ data will be passed to this template.
 
 You can find all the section templates here: 
 
-https://github.com/Psycojoker/prosopopee/tree/master/prosopopee/themes/exposure/templates/sections
+https://github.com/recitale/recitale/tree/master/recitale/themes/exposure/templates/sections
 
 You often have an ``image`` key. You need to give it a path to the
 actual file. By convention, those files are put inside your gallery folder but

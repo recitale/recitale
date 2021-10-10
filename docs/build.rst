@@ -17,7 +17,7 @@ You need
 2. Put all pics you want
 3. Create settings.yaml file in the folder
 4. Add title, date and cover key in folder/settings.yaml
-5. Use `prosopopee autogen -d folder`
+5. Use `recitale autogen -d folder`
 
 
 Generate
@@ -27,7 +27,7 @@ Generate
 
 In a folder containing the **root** settings.yaml file, simply do::
 
-    prosopopee
+    recitale
 
 A `build` folder will be created in the current directory, containing an
 index.html, static files (css & js) and pictures.
@@ -37,14 +37,14 @@ Preview
 
 In a root folder launch this command::
 
-  prosopopee preview
+  recitale preview
 
 Then, you can check your website at http://localhost:9000
 
 Deployment
 ----------
 
-Prosopopee can upload your website with rsync, to do so, run::
+recitale can upload your website with rsync, to do so, run::
 
-  prosopopee deploy
+  recitale deploy
 

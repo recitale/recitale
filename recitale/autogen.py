@@ -31,7 +31,7 @@ sections:
 {% endfor %}
 """
 
-logger = logging.getLogger("prosopopee." + __name__)
+logger = logging.getLogger("recitale." + __name__)
 
 types = ("*.JPG", "*.jpg", "*.JPEG", "*.jpeg", "*.png", "*.PNG")
 

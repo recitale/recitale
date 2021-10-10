@@ -1,5 +1,5 @@
-Prosopopee
-##########
+recitale
+########
 
 More or less a small clone of exposure.co in form of a static website generator. 
 For those of you who don't know what exposure.co is, it allows you to tell a story with your pictures.
@@ -23,16 +23,17 @@ Licence
 
 GPLv3+
 
-Credit
+Origin
 ======
 
-::
+recitale started as a fork of `prosopopee <https://github.com/Psycojoker/prosopopee>`.
 
-    16:57 <meornithorynque> et tu as besoin d'un nom ?
-    16:57 <meornithorynque> genre n'importe quoi ?
-    16:57 <meornithorynque> je propose "Prosopopée"
+recitale is a contraction of `tale` and the French word `récit` which are both depicting the same thing: a story.
 
+It is also a play on `recital` which is related to poetry reading.
 
+recitale should be pronounced /ʁe.siˈteɪl/ that is, the French pronounciation for `récit <https://en.wiktionary.org/wiki/r%C3%A9cit#Pronunciation>` followed
+by the English pronounciation of `tale <https://en.wiktionary.org/wiki/tale#Pronunciation>`.
 
 Documentation
 =============

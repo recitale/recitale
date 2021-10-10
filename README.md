@@ -2,13 +2,13 @@
 <img src="logo.png">
 </p>
 
-# Prosopopee
+# recitale
 
-Prosopopee. Static site generator for your story.
+recitale. Static site generator for your story.
 
-Make beautiful customizable pictures galleries that tell a story using a static website generator written in Python. You don't need to care about css, code and presentation, manage your contents in YAML file and Prosopopee will take care about the rest.
+Make beautiful customizable pictures galleries that tell a story using a static website generator written in Python. You don't need to care about css, code and presentation, manage your contents in YAML file and recitale will take care about the rest.
 
-Prosopopee is sections oriented, make it very flexible, many kinds of section already available:
+recitale is sections oriented, make it very flexible, many kinds of section already available:
 
 * Parallax
 * Group of pics (gallery)
@@ -17,13 +17,15 @@ Prosopopee is sections oriented, make it very flexible, many kinds of section al
 * Quote
 * [And more](http://prosopopee.readthedocs.io/en/latest/sections.html)
 
+Important note: This project is considered in alpha state. There may be significant changes in configuration files, API or user interface at any time.
+
 ## Screenshots
 
-<img src="https://github.com/Psycojoker/prosopopee/raw/master/pics/2018-04-30-113447_872x817_scrot.png" width="15%"></img> <img src="https://github.com/Psycojoker/prosopopee/raw/master/pics/2018-04-30-114059_1128x908_scrot.png" width="15%"></img> <img src="https://github.com/Psycojoker/prosopopee/raw/master/pics/2018-04-30-113707_1195x788_scrot.png" width="15%"></img> <img src="https://github.com/Psycojoker/prosopopee/raw/master/pics/2018-04-30-113821_1128x847_scrot.png" width="15%"></img> 
+<img src="https://github.com/recitale/recitale/raw/devel/pics/2018-04-30-113447_872x817_scrot.png" width="15%"></img> <img src="https://github.com/recitale/recitale/raw/devel/pics/2018-04-30-114059_1128x908_scrot.png" width="15%"></img> <img src="https://github.com/recitale/recitale/raw/devel/pics/2018-04-30-113707_1195x788_scrot.png" width="15%"></img> <img src="https://github.com/recitale/recitale/raw/devel/pics/2018-04-30-113821_1128x847_scrot.png" width="15%"></img> 
 
 ## Features
 
-Prosopopee currently supports:
+recitale currently supports:
 
  * Automatic generation
  * Lightweight
@@ -77,13 +79,13 @@ sections:
  
 ## Usage
 ```bash
-  prosopopee
-  prosopopee test
-  prosopopee preview
-  prosopopee deploy
-  prosopopee autogen (-d <folder> | --all ) [--force]
-  prosopopee (-h | --help)
-  prosopopee --version
+  recitale
+  recitale test
+  recitale preview
+  recitale deploy
+  recitale autogen (-d <folder> | --all ) [--force]
+  recitale (-h | --help)
+  recitale --version
                                                                                 
 Options:                                                                        
   test          Verify all your yaml data                                       
@@ -110,3 +112,13 @@ GLPv3
 
 channel : irc.freenode.net#prosopopee
 
+## Origin
+
+recitale started as a fork of [prosopopee](https://github.com/Psycojoker/prosopopee).
+
+recitale is a contraction of `tale` and the French word `récit` which are both depicting the same thing: a story.
+
+It is also a play on `recital` which is related to poetry reading.
+
+recitale should be pronounced `/ʁe.siˈteɪl/` that is, the French pronounciation for [`récit`](https://en.wiktionary.org/wiki/r%C3%A9cit#Pronunciation) followed
+by the English pronounciation of [`tale`](https://en.wiktionary.org/wiki/tale#Pronunciation).

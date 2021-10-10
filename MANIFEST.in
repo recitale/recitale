@@ -7,7 +7,7 @@ include logo.png
 
 recursive-include docs *.rst
 
-graft prosopopee/themes
+graft recitale/themes
 
 prune example
 exclude example

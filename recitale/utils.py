@@ -10,7 +10,7 @@ from path import Path
 import ruamel.yaml as yaml
 
 
-logger = logging.getLogger("prosopopee." + __name__)
+logger = logging.getLogger("recitale." + __name__)
 
 
 def remove_superficial_options(options):

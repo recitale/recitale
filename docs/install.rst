@@ -46,9 +46,9 @@ Installation in virtualenv
     virtualenv ve
     source ve/bin/activate
 
-2. Download and install Prosopopee::
+2. Download and install recitale::
 
-    pip3 install prosopopee
+    pip3 install recitale
    
 Docker
 ------

@@ -10,11 +10,11 @@ from .utils import remove_superficial_options
 CACHE_VERSION = 3
 
 
-logger = logging.getLogger("prosopopee." + __name__)
+logger = logging.getLogger("recitale." + __name__)
 
 
 class Cache:
-    cache_file_path = os.path.join(os.getcwd(), ".prosopopee_cache")
+    cache_file_path = os.path.join(os.getcwd(), ".recitale_cache")
 
     def __init__(self, json):
         # fix: I need to keep a reference to json because for whatever reason
@@ -22,7 +22,7 @@ class Cache:
         # the __del__ call to save the cache
         # This wonderfully stupid behavior has been fixed in 3.4 (which nobody uses)
         self.json = json
-        if os.path.exists(os.path.join(os.getcwd(), ".prosopopee_cache")):
+        if os.path.exists(os.path.join(os.getcwd(), ".recitale_cache")):
             cache = json.load(open(self.cache_file_path, "r"))
         else:
             cache = {"version": CACHE_VERSION}
