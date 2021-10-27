@@ -26,14 +26,14 @@ GPLv3+
 Origin
 ======
 
-recitale started as a fork of `prosopopee <https://github.com/Psycojoker/prosopopee>`.
+recitale started as a fork of `prosopopee <https://github.com/Psycojoker/prosopopee>`__.
 
 recitale is a contraction of `tale` and the French word `récit` which are both depicting the same thing: a story.
 
 It is also a play on `recital` which is related to poetry reading.
 
-recitale should be pronounced /ʁe.siˈteɪl/ that is, the French pronounciation for `récit <https://en.wiktionary.org/wiki/r%C3%A9cit#Pronunciation>` followed
-by the English pronounciation of `tale <https://en.wiktionary.org/wiki/tale#Pronunciation>`.
+recitale should be pronounced /ʁe.siˈteɪl/ that is, the French pronounciation for `récit <https://en.wiktionary.org/wiki/r%C3%A9cit#Pronunciation>`__ followed
+by the English pronounciation of `tale <https://en.wiktionary.org/wiki/tale#Pronunciation>`__.
 
 Documentation
 =============
