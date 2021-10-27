@@ -102,7 +102,7 @@ https://hub.docker.com/r/beudbeud/prosopopee/
 
 ## Licence 
 
-GLPv3
+GPL-3.0+
 
 ## Documentation
 
