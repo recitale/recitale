@@ -2,7 +2,7 @@
 <img src="logo.png">
 </p>
 
-![GitHub](https://img.shields.io/github/license/recitale/recitale?color=brightgreen)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/recitale)![PyPI - Status](https://img.shields.io/pypi/status/recitale)![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/recitale/recitale?sort=semver)![PyPI](https://img.shields.io/pypi/v/recitale)
+![GitHub](https://img.shields.io/github/license/recitale/recitale?color=brightgreen)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/recitale)![PyPI - Status](https://img.shields.io/pypi/status/recitale)![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/recitale/recitale?sort=semver)![PyPI](https://img.shields.io/pypi/v/recitale)![Read the Docs](https://img.shields.io/readthedocs/recitale)
 
 # recitale
 
@@ -17,7 +17,7 @@ recitale is sections oriented, make it very flexible, many kinds of section alre
 * Paragraph
 * Iframe (Youtube, Maps, etc..)
 * Quote
-* [And more](http://prosopopee.readthedocs.io/en/latest/sections.html)
+* [And more](http://recitale.readthedocs.io/en/latest/sections.html)
 
 Important note: This project is considered in alpha state. There may be significant changes in configuration files, API or user interface at any time.
 
@@ -108,7 +108,7 @@ GPL-3.0+
 
 ## Documentation
 
-  http://prosopopee.readthedocs.org/en/latest/
+  http://recitale.readthedocs.org/en/latest/
 
 ## IRC 
 

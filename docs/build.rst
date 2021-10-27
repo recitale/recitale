@@ -7,7 +7,7 @@ For build your website there are two way:
 * Self made
 
 If you want do all by your self and make custom gallery and use many section, 
-you need follow https://prosopopee.readthedocs.io/en/latest/configuration.html#gallery-settings-yaml
+you need follow https://recitale.readthedocs.io/en/latest/configuration.html#gallery-settings-yaml
 
 But if is just for make gallery with only picture you can generate it automatically.
 
