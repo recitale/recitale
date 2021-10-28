@@ -112,7 +112,7 @@ GPL-3.0+
 
 ## IRC 
 
-channel : irc.freenode.net#prosopopee
+channel : irc.libera.chat#recitale
 
 ## Origin
 
