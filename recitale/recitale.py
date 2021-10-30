@@ -4,6 +4,7 @@ from argparse import ArgumentParser, ArgumentTypeError
 import logging
 import os
 import shutil
+import shlex
 import socketserver
 import subprocess
 import sys
@@ -619,7 +620,8 @@ def render_video(base):
     if base.reencodes:
         reencodecmd = (
             basecmd
-            + " -stats -c:v {video} -b:v {vbitrate} {other} -c:a {audio} -b:a {abitrate} -f {format} "
+            + " -stats -c:v {video} -b:v {vbitrate} {other} -c:a {audio} -b:a {abitrate} "
+            + "-f {format} "
         )
         for reencode in base.reencodes.values():
             logger.info("Reencoding (%s)" % base.filepath)
@@ -863,6 +865,7 @@ def main():
     jobs = args.jobs if args.cmd else None
 
     try:
+
         def set_queue(initargs):
             queue, funcs = initargs
             for func in funcs:
