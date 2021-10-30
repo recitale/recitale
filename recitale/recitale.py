@@ -787,13 +787,16 @@ def main():
             r_username = settings["settings"]["deploy"]["username"]
             r_hostname = settings["settings"]["deploy"]["hostname"]
             r_cmd = "rsync -avz --progress %s build/* %s@%s:%s" % (
-                r_others,
-                r_username,
-                r_hostname,
-                r_dest,
+                shlex.quote(r_others),
+                shlex.quote(r_username),
+                shlex.quote(r_hostname),
+                shlex.quote(r_dest),
             )
         else:
-            r_cmd = "rsync -avz --progress %s build/* %s" % (r_others, r_dest)
+            r_cmd = "rsync -avz --progress %s build/* %s" % (
+                shlex.quote(r_others),
+                shlex.quote(r_dest),
+            )
         if os.system(r_cmd) != 0:
             logger.error("deployment failed")
             sys.exit(1)
