@@ -2,7 +2,12 @@
 <img src="logo.png">
 </p>
 
-![GitHub](https://img.shields.io/github/license/recitale/recitale?color=brightgreen)![PyPI - Python Version](https://img.shields.io/pypi/pyversions/recitale)![PyPI - Status](https://img.shields.io/pypi/status/recitale)![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/recitale/recitale?sort=semver)![PyPI](https://img.shields.io/pypi/v/recitale)![Read the Docs](https://img.shields.io/readthedocs/recitale)
+![GitHub](https://img.shields.io/github/license/recitale/recitale?color=brightgreen)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/recitale)
+![PyPI - Status](https://img.shields.io/pypi/status/recitale)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/recitale/recitale?sort=semver)
+![PyPI](https://img.shields.io/pypi/v/recitale)
+![Read the Docs](https://img.shields.io/readthedocs/recitale)
 
 # recitale
 
