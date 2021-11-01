@@ -150,11 +150,8 @@ def get_settings():
     else:
         conv_video = "ffmpeg"
 
-    if subprocess.run(["which", shlex.quote(conv_video)]).returncode != 0:
-        if (
-            conv_video == "ffmpeg"
-            and subprocess.run(["which", "avconv"]).returncode == 0
-        ):
+    if shutil.which(conv_video) is None:
+        if conv_video == "ffmpeg" and shutil.which("avconv"):
             SETTINGS["ffmpeg"]["binary"] = "avconv"
             logger.warning(
                 "Video: I couldn't locate ffmpeg but I could find avconv, "
@@ -772,7 +769,7 @@ def main():
             raise
 
     if args.cmd == "deploy":
-        if subprocess.run(["which", "rsync"]).returncode != 0:
+        if shutil.which("rsync") is None:
             logger.error(
                 "I can't locate the rsync + please install the 'rsync' package."
             )
