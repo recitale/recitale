@@ -1,0 +1,39 @@
+on: [push, pull_request]
+
+jobs:
+  tox:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          set -xe
+          python -VV
+          python -m site
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade virtualenv tox
+      - name: Check code quality
+        run: python -m tox
+
+  build-example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          set -xe
+          sudo apt update
+          sudo apt install -y --no-install-recommends -qq ffmpeg
+          python -VV
+          python -m site
+          python -m pip install -e .
+      - name: Build example gallery
+        run: |
+          cd example
+          recitale build
