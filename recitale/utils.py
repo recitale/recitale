@@ -1,7 +1,8 @@
 import logging
 import sys
 import base64
-from subprocess import check_output
+import shlex
+import subprocess
 from email.utils import formatdate
 from datetime import datetime
 from builtins import str
@@ -71,11 +72,13 @@ def makeform(template, settings, gallery_settings):
 def encrypt(password, template, gallery_path, settings, gallery_settings):
     encrypted_template = template.get_template("encrypted.html")
     index_plain = Path("build").joinpath(gallery_path, "index.html")
-    encrypted = check_output(
-        'cat %s | openssl enc -e -base64 -A -aes-256-cbc -md md5 -pass pass:"%s"'
-        % (index_plain, password),
-        shell=True,
+    cmd = "openssl enc -e -base64 -A -aes-256-cbc -md md5 -pass pass:%s" % shlex.quote(
+        password
     )
+    with open(index_plain, "r") as f:
+        encrypted = subprocess.check_output(
+            shlex.split(cmd), stdin=f, stderr=subprocess.DEVNULL
+        )
     html = encrypted_template.render(
         settings=settings,
         form=makeform(template, settings, gallery_settings),
