@@ -10,6 +10,7 @@
 ![Read the Docs](https://img.shields.io/readthedocs/recitale)
 ![GitHub Build](https://github.com/recitale/recitale/actions/workflows/devel.yml/badge.svg?branch=devel&event=push)
 ![GitHub Release](https://github.com/recitale/recitale/actions/workflows/release.yml/badge.svg)
+![Codecov devel](https://img.shields.io/codecov/c/github/recitale/recitale/devel)
 
 # recitale
 
