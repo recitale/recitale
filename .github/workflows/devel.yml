@@ -17,6 +17,10 @@ jobs:
           python -m pip install --upgrade virtualenv tox
       - name: Check code quality
         run: python -m tox
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v2
+        with:
+          verbose: true
 
   build-example:
     runs-on: ubuntu-latest
