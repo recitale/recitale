@@ -4,6 +4,7 @@ recursive-include pics *.png
 include tox.ini
 include LICENSE
 include logo.png
+include .coveragerc
 
 recursive-include docs *.rst
 
