@@ -4,7 +4,7 @@ import sys
 from time import gmtime, strftime
 from glob import glob
 from jinja2 import Template
-from path import Path
+from pathlib import Path
 from PIL import Image
 
 from .utils import load_settings
@@ -77,7 +77,7 @@ def build_template(folder, force):
         cover=gallery_settings["cover"],
         files=sorted(files_grabbed, key=get_exif),
     )
-    settings = open(Path(".").joinpath(folder, "settings.yaml").abspath(), "w")
+    settings = open(Path(".").joinpath(folder, "settings.yaml").resolve(), "w")
     settings.write(msg)
     logger.info("Generation: %s gallery", folder)
 
