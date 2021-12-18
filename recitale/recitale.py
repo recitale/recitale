@@ -18,7 +18,7 @@ from multiprocessing import Pool, Manager, Process
 from PIL import Image, ImageOps, JpegImagePlugin, ImageFile
 from tqdm import tqdm
 
-from path import Path
+from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -216,7 +216,7 @@ def get_gallery_templates(
     theme_path = Path(__file__).parent.joinpath("themes", theme).exists()
 
     available_themes = theme, "', '".join(
-        Path(__file__).parent.joinpath("themes").listdir()
+        str(path) for path in Path(__file__).parent.joinpath("themes").iterdir()
     )
 
     if not theme_path:
@@ -228,7 +228,7 @@ def get_gallery_templates(
         sys.exit(1)
 
     templates_dir = [
-        Path(".").joinpath("templates").realpath(),
+        Path(".").joinpath("templates").resolve(),
         Path(__file__).parent.joinpath("themes", theme, "templates"),
     ]
 
@@ -243,7 +243,13 @@ def get_gallery_templates(
     subgallery_templates.filters["rfc822"] = rfc822
     subgallery_templates.filters["local_date"] = get_local_date_filter(date_locale)
 
-    Path(".").joinpath("build", gallery_path, "static").rmtree_p()
+    try:
+        buildp = (
+            Path(".").joinpath("build", gallery_path, "static").resolve(strict=True)
+        )
+        shutil.rmtree(buildp)
+    except FileNotFoundError:
+        pass
 
     if Path(".").joinpath("static").exists():
         shutil.copytree(
@@ -274,11 +280,11 @@ def process_directory(
 
     sub_galleries = [
         x
-        for x in Path(".").joinpath(gallery_path).listdir()
+        for x in Path(".").joinpath(gallery_path).iterdir()
         if x.joinpath("settings.yaml").exists()
     ]
 
-    Path("build").joinpath(gallery_path).makedirs_p()
+    Path("build").joinpath(gallery_path).mkdir(parents=True, exist_ok=True)
 
     if not gallery_settings.get("public", True):
         build_gallery(settings, gallery_settings, gallery_path, parent_templates)
@@ -358,8 +364,8 @@ def create_cover(gallery_name, gallery_settings, gallery_path):
 
     gallery_cover = {
         "title": gallery_settings["title"],
-        "link": gallery_path,
-        "name": gallery_name + "/",
+        "link": str(gallery_path),
+        "name": gallery_name,
         "sub_title": gallery_settings.get("sub_title", ""),
         "date": gallery_settings.get("date", ""),
         "tags": gallery_settings.get("tags", ""),
@@ -390,8 +396,8 @@ def __build_gallery(
         Image=ImageFactory,
         Video=VideoFactory,
         Audio=AudioFactory,
-        link=target_gallery_path,
-        name=gallery_path.split("/", 1)[-1],
+        link=str(target_gallery_path),
+        name=gallery_path.name,
     ).encode("Utf-8")
 
     open(Path("build").joinpath(target_gallery_path, "index.html"), "wb").write(html)
@@ -416,7 +422,7 @@ def build_gallery(settings, gallery_settings, gallery_path, template):
     ):
         return
 
-    Path("build").joinpath(gallery_path, "light").makedirs_p()
+    Path("build").joinpath(gallery_path, "light").mkdir(parents=True, exist_ok=True)
     gallery_light_path = Path(gallery_path).joinpath("light")
     light_templates = get_gallery_templates(
         "light", gallery_light_path, date_locale=settings["settings"].get("date_locale")
@@ -793,7 +799,7 @@ def main():
     front_page_galleries_cover = []
 
     galleries_dirs = [
-        x for x in Path(".").listdir() if x.joinpath("settings.yaml").exists()
+        x for x in Path(".").iterdir() if x.joinpath("settings.yaml").exists()
     ]
     includes = [x for x in settings["include"] if Path(".").joinpath(x).exists()]
 
@@ -862,7 +868,7 @@ def main():
         autogen(args.folder, args.force)
         return
 
-    Path("build").makedirs_p()
+    Path("build").mkdir(parents=True, exist_ok=True)
     theme = settings["settings"].get("theme", "exposure")
     date_locale = settings["settings"].get("date_locale")
     templates = get_gallery_templates(theme, date_locale=date_locale)
@@ -886,11 +892,15 @@ def main():
         bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} | ETA: {remaining}",
     ):
         front_page_galleries_cover.append(
-            process_directory(gallery.normpath(), settings, templates)
+            process_directory(
+                gallery.resolve(strict=True).relative_to(Path(".").resolve()),
+                settings,
+                templates,
+            )
         )
 
     for i in includes:
-        srcdir = Path(i).dirname()
+        srcdir = Path(i).parent
         dstdir = Path(".").joinpath("build", srcdir)
         if srcdir != "":
             os.makedirs(dstdir, exist_ok=True)

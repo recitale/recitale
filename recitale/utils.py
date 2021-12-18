@@ -9,7 +9,7 @@ from email.utils import formatdate
 from datetime import datetime
 from builtins import str
 
-from path import Path
+from pathlib import Path
 import ruamel.yaml as yaml
 
 
@@ -142,7 +142,7 @@ def rfc822(date):
 def load_settings(folder):
     try:
         with open(
-            Path(".").joinpath(folder, "settings.yaml").abspath(), "r"
+            Path(".").joinpath(folder, "settings.yaml").resolve(), "r"
         ) as settings:
             gallery_settings = yaml.safe_load(settings.read())
     except (yaml.error.MarkedYAMLError, yaml.YAMLError) as exc:
