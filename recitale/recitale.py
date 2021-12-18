@@ -42,16 +42,23 @@ def loglevel(string):
     )
 
 
-parser = ArgumentParser(description="Static site generator for your story.")
-parser.add_argument("--version", action="version", version="%(prog)s " + __version__)
-parser.add_argument(
+loglevel_parser = ArgumentParser(add_help=False)
+loglevel_parser.add_argument(
     "--log-level",
     default=logging.WARNING,
     type=loglevel,
     help="Configure the logging level",
 )
+
+parser = ArgumentParser(
+    description="Static site generator for your story.", parents=[loglevel_parser]
+)
+parser.add_argument("--version", action="version", version="%(prog)s " + __version__)
+
 subparser = parser.add_subparsers(dest="cmd")
-parser_build = subparser.add_parser("build", help="Generate static site")
+parser_build = subparser.add_parser(
+    "build", help="Generate static site", parents=[loglevel_parser]
+)
 parser_build.add_argument(
     "-j",
     "--jobs",
@@ -60,10 +67,16 @@ parser_build.add_argument(
     help="Specifies number of jobs (thumbnail generations) to run simultaneously. Default: number "
     "of threads available on the system",
 )
-subparser.add_parser("test", help="Verify all your yaml data")
-subparser.add_parser("preview", help="Start preview webserver on port 9000")
-subparser.add_parser("deploy", help="Deploy your website")
-parser_autogen = subparser.add_parser("autogen", help="Generate gallery automaticaly")
+subparser.add_parser(
+    "test", help="Verify all your yaml data", parents=[loglevel_parser]
+)
+subparser.add_parser(
+    "preview", help="Start preview webserver on port 9000", parents=[loglevel_parser]
+)
+subparser.add_parser("deploy", help="Deploy your website", parents=[loglevel_parser])
+parser_autogen = subparser.add_parser(
+    "autogen", help="Generate gallery automaticaly", parents=[loglevel_parser]
+)
 group = parser_autogen.add_mutually_exclusive_group(required=True)
 group.add_argument(
     "-d",
