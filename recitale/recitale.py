@@ -729,7 +729,7 @@ def render_video(base):
 
 def reencode_audio(base):
     logger.debug("(%s) Rendering reencodes", base.filepath)
-    basecmd = "{binary} -loglevel {loglevel} -stats -i " + shlex.quote(
+    basecmd = "{binary} -loglevel {loglevel} -progress /dev/stdout -i " + shlex.quote(
         str(base.filepath)
     )
     basecmd = basecmd + " -c:a {audio} -y "
@@ -747,7 +747,28 @@ def reencode_audio(base):
         command = basecmd + shlex.quote(filepath)
         command = command.format(**base.options)
 
-        if subprocess.run(shlex.split(command)).returncode != 0:
+        proc = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+
+        old_reencoded_secs = 0
+
+        with tqdm(
+            total=base.duration,
+            desc="Reencoding %s" % (str(base.filepath)),
+            leave=False,
+            bar_format="{l_bar}{bar}| {n_fmt}s/{total_fmt}s | ETA: {remaining}",
+        ) as pbar:
+            for content in proc.stdout:
+                m = re.search(r"out_time_us=(.*)\\n", str(content))
+                if m and m.group(1):
+                    us = int(m.group(1))
+                    reencoded_secs = us // 1000000
+                    if reencoded_secs - old_reencoded_secs:
+                        pbar.update(reencoded_secs - old_reencoded_secs)
+                    old_reencoded_secs = reencoded_secs
+
+        proc.wait()
+
+        if proc.returncode != 0:
             logger.error(
                 "An error occured while rendering reencodes for %s", base.filepath
             )
