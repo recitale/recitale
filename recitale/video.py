@@ -15,8 +15,8 @@ logger = logging.getLogger("recitale." + __name__)
 class VideoCommon:
     @property
     def ratio(self):
-        # For when BaseVideo.ratio is called before BaseVideo.copy() is.
-        if not self.size:
+        # Calling ffprobe is expensive so do it lazily and only once
+        if not hasattr(self, "size"):
             if VideoFactory.global_options["binary"] == "ffmpeg":
                 binary = "ffprobe"
             else:

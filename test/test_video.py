@@ -1,6 +1,40 @@
 import pytest
 
-from recitale.video import VideoFactory
+from pathlib import Path
+from unittest.mock import patch
+
+from recitale.video import BaseVideo, VideoFactory
+
+
+class TestVideoCommon:
+    check_output = b"840,480"
+
+    def test_ratio_base(self):
+        VideoFactory.global_options = {"binary": "ffmpeg", "extension": "webm"}
+        bvid = BaseVideo({"name": "test.mp4"}, VideoFactory.global_options)
+        with patch(
+            "recitale.video.subprocess.check_output", return_value=self.check_output
+        ):
+            assert bvid.ratio == 840 / 480
+
+    def test_ratio_base_only_one_subprocess(self):
+        VideoFactory.global_options = {"binary": "ffmpeg", "extension": "webm"}
+        bvid = BaseVideo({"name": "test.mp4"}, VideoFactory.global_options)
+        with patch(
+            "recitale.video.subprocess.check_output", return_value=self.check_output
+        ):
+            assert bvid.ratio == 840 / 480
+        assert bvid.ratio == 840 / 480
+
+    def test_ratio_reencode(self):
+        VideoFactory.global_options = {"binary": "ffmpeg", "extension": "webm"}
+        bvid = BaseVideo({"name": "test.mp4"}, VideoFactory.global_options)
+        with patch(
+            "recitale.video.subprocess.check_output", return_value=self.check_output
+        ):
+            revid_path = bvid.reencode((840, 480))
+            revid = bvid.reencodes.get(Path(revid_path))
+        assert revid.ratio == 840 / 480
 
 
 # HACK because VideoFactory.base_vids does not seem to be reset between tests.
