@@ -28,7 +28,7 @@ class VideoCommon:
             )
             out = subprocess.check_output(shlex.split(command))
             width, height = out.decode("utf-8").split(",")
-            self.size = width, height
+            self.size = int(width), int(height)
         else:
             width, height = self.size
         return width / height
