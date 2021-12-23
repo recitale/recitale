@@ -13,24 +13,27 @@ logger = logging.getLogger("recitale." + __name__)
 
 
 class VideoCommon:
+    def __get_infos(self):
+        if VideoFactory.global_options["binary"] == "ffmpeg":
+            binary = "ffprobe"
+        else:
+            binary = "avprobe"
+        command = (
+            binary
+            + " -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "
+            + shlex.quote(str(self.filepath))
+        )
+        out = subprocess.check_output(shlex.split(command))
+        width, height = out.decode("utf-8").split(",")
+        self.size = int(width), int(height)
+
     @property
     def ratio(self):
         # Calling ffprobe is expensive so do it lazily and only once
         if not hasattr(self, "size"):
-            if VideoFactory.global_options["binary"] == "ffmpeg":
-                binary = "ffprobe"
-            else:
-                binary = "avprobe"
-            command = (
-                binary
-                + " -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "
-                + shlex.quote(str(self.filepath))
-            )
-            out = subprocess.check_output(shlex.split(command))
-            width, height = out.decode("utf-8").split(",")
-            self.size = int(width), int(height)
-        else:
-            width, height = self.size
+            self.__get_infos()
+
+        width, height = self.size
         return width / height
 
 
