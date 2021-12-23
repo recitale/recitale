@@ -7,7 +7,7 @@ from recitale.video import BaseVideo, VideoFactory
 
 
 class TestVideoCommon:
-    check_output = '{ "streams": [{ "height": 480, "width": 840}] }'
+    check_output = '{ "streams": [{ "height": 480, "width": 840}], "format": {"duration": "10.4"} }'
 
     def test_ratio_base(self):
         VideoFactory.global_options = {"binary": "ffmpeg", "extension": "webm"}
@@ -35,6 +35,23 @@ class TestVideoCommon:
             revid_path = bvid.reencode((840, 480))
             revid = bvid.reencodes.get(Path(revid_path))
         assert revid.ratio == 840 / 480
+
+    def test_duration_base(self):
+        VideoFactory.global_options = {"binary": "ffmpeg", "extension": "webm"}
+        bvid = BaseVideo({"name": "test.mp4"}, VideoFactory.global_options)
+        with patch(
+            "recitale.video.subprocess.check_output", return_value=self.check_output
+        ):
+            assert bvid.duration == 10.4
+
+    def test_duration_base_only_one_subprocess(self):
+        VideoFactory.global_options = {"binary": "ffmpeg", "extension": "webm"}
+        bvid = BaseVideo({"name": "test.mp4"}, VideoFactory.global_options)
+        with patch(
+            "recitale.video.subprocess.check_output", return_value=self.check_output
+        ):
+            assert bvid.duration == 10.4
+        assert bvid.duration == 10.4
 
 
 # HACK because VideoFactory.base_vids does not seem to be reset between tests.
