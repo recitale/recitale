@@ -1,6 +1,29 @@
 import pytest
 
-from recitale.audio import AudioFactory
+from unittest.mock import patch
+
+from recitale.audio import AudioFactory, BaseAudio
+
+
+class TestAudioCommon:
+    check_output = '{ "format": {"duration": "10.4"} }'
+
+    def test_duration_base(self):
+        AudioFactory.global_options = {"binary": "ffmpeg", "extension": "mp3"}
+        baud = BaseAudio({"name": "test.mp3"}, AudioFactory.global_options)
+        with patch(
+            "recitale.audio.subprocess.check_output", return_value=self.check_output
+        ):
+            assert baud.duration == 10.4
+
+    def test_duration_base_only_one_subprocess(self):
+        AudioFactory.global_options = {"binary": "ffmpeg", "extension": "mp3"}
+        baud = BaseAudio({"name": "test.mp3"}, AudioFactory.global_options)
+        with patch(
+            "recitale.audio.subprocess.check_output", return_value=self.check_output
+        ):
+            assert baud.duration == 10.4
+        assert baud.duration == 10.4
 
 
 # HACK because AudioFactory.base_audios does not seem to be reset between tests.
