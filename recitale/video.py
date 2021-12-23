@@ -22,12 +22,21 @@ class VideoCommon:
         command = (
             binary
             + " -v error -select_streams v:0 -show_entries stream=width,height "
+            + " -show_entries format=duration "
             + " -print_format json=compact=1 "
             + shlex.quote(str(self.filepath))
         )
         out = subprocess.check_output(shlex.split(command))
         infos = json_loads(out)
         self.size = infos["streams"][0]["width"], infos["streams"][0]["height"]
+        self.dur = float(infos["format"]["duration"])
+
+    @property
+    def duration(self):
+        if not hasattr(self, "dur"):
+            self.__get_infos()
+
+        return self.dur
 
     @property
     def ratio(self):
