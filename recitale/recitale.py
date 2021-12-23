@@ -10,6 +10,7 @@ import subprocess
 import sys
 import http.server
 import struct
+import re
 
 from babel.core import default_locale
 from babel.dates import format_date
@@ -620,8 +621,8 @@ def render_video(base):
     if base.reencodes:
         reencodecmd = (
             basecmd
-            + " -stats -c:v {video} -b:v {vbitrate} {other} -c:a {audio} -b:a {abitrate} "
-            + "-f {format} "
+            + " -c:v {video} -b:v {vbitrate} {other} -c:a {audio} -b:a {abitrate} "
+            + "-f {format} -progress /dev/stdout "
         )
         for reencode in base.reencodes.values():
             logger.info("Reencoding (%s)" % base.filepath)
@@ -645,7 +646,28 @@ def render_video(base):
             )
             command = command.format(**base.options)
 
-            if subprocess.run(shlex.split(command)).returncode != 0:
+            proc = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+
+            old_reencoded_secs = 0
+
+            with tqdm(
+                total=base.duration,
+                desc="Reencoding %s" % (str(base.filepath)),
+                leave=False,
+                bar_format="{l_bar}{bar}| {n_fmt}s/{total_fmt}s | ETA: {remaining}",
+            ) as pbar:
+                for content in proc.stdout:
+                    m = re.search(r"out_time_us=(.*)\\n", str(content))
+                    if m and m.group(1):
+                        us = int(m.group(1))
+                        reencoded_secs = us // 1000000
+                        if reencoded_secs - old_reencoded_secs:
+                            pbar.update(reencoded_secs - old_reencoded_secs)
+                        old_reencoded_secs = reencoded_secs
+
+            proc.wait()
+
+            if proc.returncode != 0:
                 logger.error(
                     "An error occured while rendering reencodes for %s", base.filepath
                 )
