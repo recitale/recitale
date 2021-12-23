@@ -7,7 +7,7 @@ from recitale.video import BaseVideo, VideoFactory
 
 
 class TestVideoCommon:
-    check_output = b"840,480"
+    check_output = '{ "streams": [{ "height": 480, "width": 840}] }'
 
     def test_ratio_base(self):
         VideoFactory.global_options = {"binary": "ffmpeg", "extension": "webm"}

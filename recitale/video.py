@@ -3,6 +3,7 @@ import shlex
 import subprocess
 
 from json import dumps as json_dumps
+from json import loads as json_loads
 from pathlib import Path
 from zlib import crc32
 
@@ -20,12 +21,13 @@ class VideoCommon:
             binary = "avprobe"
         command = (
             binary
-            + " -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "
+            + " -v error -select_streams v:0 -show_entries stream=width,height "
+            + " -print_format json=compact=1 "
             + shlex.quote(str(self.filepath))
         )
         out = subprocess.check_output(shlex.split(command))
-        width, height = out.decode("utf-8").split(",")
-        self.size = int(width), int(height)
+        infos = json_loads(out)
+        self.size = infos["streams"][0]["width"], infos["streams"][0]["height"]
 
     @property
     def ratio(self):
