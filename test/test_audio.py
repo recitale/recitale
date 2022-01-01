@@ -54,7 +54,7 @@ class TestAudioFactory:
     def test_same_path_same_audio(self):
         audio1 = AudioFactory.get("gallery", "test.mp3")
         audio2 = AudioFactory.get("gallery", "test.mp3")
-        assert audio1 == audio2
+        assert audio1 is audio2
 
     def test_same_path_same_audio_one_base_audios(self):
         AudioFactory.get("gallery", "test.mp3")
@@ -67,10 +67,10 @@ class TestAudioFactory:
     def test_dotdot_paths(self, gallery, audio):
         audio1 = AudioFactory.get("gallery", "test.mp3")
         audio2 = AudioFactory.get(gallery, audio)
-        assert audio1 == audio2
+        assert audio1 is audio2
 
     def test_base_audios_presence(self):
         audio1 = AudioFactory.get("gallery", "test.mp3")
         base_audios = AudioFactory.base_audios
         assert len(base_audios.keys()) == 1
-        assert audio1 == list(base_audios.values())[0]
+        assert audio1 is list(base_audios.values())[0]

@@ -82,7 +82,7 @@ class TestVideoFactory:
     def test_same_path_same_video(self):
         vid1 = VideoFactory.get("gallery", {"name": "test.mp4", "type": "video"})
         vid2 = VideoFactory.get("gallery", {"name": "test.mp4", "type": "video"})
-        assert vid1 == vid2
+        assert vid1 is vid2
 
     def test_same_path_same_video_one_base_vids(self):
         VideoFactory.get("gallery", {"name": "test.mp4", "type": "video"})
@@ -101,10 +101,10 @@ class TestVideoFactory:
     def test_dotdot_paths(self, gallery, video):
         vid1 = VideoFactory.get("gallery", {"name": "test.mp4", "type": "video"})
         vid2 = VideoFactory.get(gallery, video)
-        assert vid1 == vid2
+        assert vid1 is vid2
 
     def test_base_vids_presence(self):
         vid1 = VideoFactory.get("gallery", {"name": "test.mp4", "type": "video"})
         base_vids = VideoFactory.base_vids
         assert len(base_vids.keys()) == 1
-        assert vid1 == list(base_vids.values())[0]
+        assert vid1 is list(base_vids.values())[0]

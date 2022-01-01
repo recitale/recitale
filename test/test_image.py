@@ -31,7 +31,7 @@ class TestImageFactory:
     def test_same_image_with_without_name(self):
         img1 = ImageFactory.get("gallery", "test.jpg")
         img2 = ImageFactory.get("gallery", {"name": "test.jpg"})
-        assert img1 == img2
+        assert img1 is img2
 
     def test_image_dict_without_name(self):
         with pytest.raises(SystemExit) as sysexit:
@@ -42,7 +42,7 @@ class TestImageFactory:
     def test_same_path_same_image(self):
         img1 = ImageFactory.get("gallery", "test.jpg")
         img2 = ImageFactory.get("gallery", "test.jpg")
-        assert img1 == img2
+        assert img1 is img2
 
     def test_same_path_same_image_one_base_imgs(self):
         ImageFactory.get("gallery", "test.jpg")
@@ -55,10 +55,10 @@ class TestImageFactory:
     def test_dotdot_paths(self, gallery, image):
         img1 = ImageFactory.get("gallery", "test.jpg")
         img2 = ImageFactory.get(gallery, image)
-        assert img1 == img2
+        assert img1 is img2
 
     def test_base_imgs_presence(self):
         img1 = ImageFactory.get("gallery", "test.jpg")
         base_imgs = ImageFactory.base_imgs
         assert len(base_imgs.keys()) == 1
-        assert img1 == list(base_imgs.values())[0]
+        assert img1 is list(base_imgs.values())[0]
