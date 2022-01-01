@@ -1,9 +1,12 @@
 import pytest
 
+from json import dumps as json_dumps
 from pathlib import Path
 from unittest.mock import patch
+from zlib import crc32
 
 from recitale.video import BaseVideo, VideoFactory
+from recitale.utils import remove_superficial_options
 
 
 class TestVideoCommon:
@@ -52,6 +55,71 @@ class TestVideoCommon:
         ):
             assert bvid.duration == 10.4
         assert bvid.duration == 10.4
+
+
+class TestBaseVideo:
+    def test_baseid(self):
+        base = BaseVideo({"name": "test.mp4", "some": "options"}, {})
+        assert base.chksum_opt == crc32(
+            bytes(json_dumps({"some": "options"}, sort_keys=True), "utf-8")
+        )
+
+    @patch(
+        "recitale.video.remove_superficial_options",
+        side_effect=remove_superficial_options,
+    )
+    def test_baseid_removed_superficial_opt(self, mock_rm_sup_opt):
+        base1 = BaseVideo({"name": "test.mp4", "some": "options", "resize": "50%"}, {})
+        mock_rm_sup_opt.assert_called_with(
+            {"name": "test.mp4", "some": "options", "resize": "50%"}
+        )
+        base2 = BaseVideo({"name": "test.mp4", "some": "options"}, {})
+        mock_rm_sup_opt.assert_called_with({"name": "test.mp4", "some": "options"})
+        assert base1.chksum_opt == base2.chksum_opt
+
+    def test_reencode_same_obj(self):
+        base = BaseVideo({"name": "test.mp4", "extension": "webm"}, {})
+        reenc1 = base.reencode((100, 200))
+        reenc2 = base.reencode((100, 200))
+        assert len(base.reencodes.keys()) == 1
+        assert reenc1 is reenc2
+
+    def test_reencode_diff_resize(self):
+        base = BaseVideo({"name": "test.mp4", "extension": "webm"}, {})
+        base.reencode((100, 200))
+        base.reencode((150, 300))
+        assert len(base.reencodes.keys()) == 2
+        reencs = list(base.reencodes.values())
+        assert reencs[0] != reencs[1]
+
+    def test_reencode_filepath(self):
+        base = BaseVideo({"name": "test.mp4", "extension": "webm"}, {})
+        reenc = base.reencode((100, 200))
+        assert reenc == "test-%s-100x200.webm" % (
+            crc32(bytes(json_dumps({"extension": "webm"}, sort_keys=True), "utf-8"))
+        )
+
+    def test_thumbnail_same_obj(self):
+        base = BaseVideo({"name": "test.mp4"}, {})
+        reenc1 = base.thumbnail((100, 200))
+        reenc2 = base.thumbnail((100, 200))
+        assert len(base.thumbnails.keys()) == 1
+        assert reenc1 is reenc2
+
+    def test_thumbnail_diff_resize(self):
+        base = BaseVideo({"name": "test.mp4"}, {})
+        base.thumbnail((100, 200))
+        base.thumbnail((150, 300))
+        assert len(base.thumbnails.keys()) == 2
+        reencs = list(base.thumbnails.values())
+        assert reencs[0] != reencs[1]
+
+    def test_thumbnail_filepath(self):
+        base = BaseVideo({"name": "test.mp4"}, {})
+        reenc = base.thumbnail((100, 200))
+        assert reenc == "test-%s-100x200.jpg" % (
+            crc32(bytes(json_dumps({}, sort_keys=True), "utf-8"))
+        )
 
 
 # HACK because VideoFactory.base_vids does not seem to be reset between tests.
