@@ -1,8 +1,11 @@
 import pytest
 
+from json import dumps as json_dumps
 from unittest.mock import patch
+from zlib import crc32
 
 from recitale.audio import AudioFactory, BaseAudio
+from recitale.utils import remove_superficial_options
 
 
 class TestAudioCommon:
@@ -24,6 +27,38 @@ class TestAudioCommon:
         ):
             assert baud.duration == 10.4
         assert baud.duration == 10.4
+
+
+class TestBaseAudio:
+    def test_baseid(self):
+        base = BaseAudio("test.mp3", {"extension": "ogg"})
+        assert base.chksum_opt == crc32(
+            bytes(json_dumps({"extension": "ogg"}, sort_keys=True), "utf-8")
+        )
+
+    @patch(
+        "recitale.audio.remove_superficial_options",
+        side_effect=remove_superficial_options,
+    )
+    def test_baseid_removed_superficial_opt(self, mock_rm_sup_opt):
+        base1 = BaseAudio("test.mp3", {"extension": "ogg"})
+        mock_rm_sup_opt.assert_called_with({"extension": "ogg"})
+        base2 = BaseAudio("test.mp3", {"extension": "ogg", "name": "test123test"})
+        mock_rm_sup_opt.assert_called_with({"extension": "ogg", "name": "test123test"})
+        assert base1.chksum_opt == base2.chksum_opt
+
+    def test_reencode_same_obj(self):
+        base = BaseAudio("test.mp3", {"extension": "ogg"})
+        base.reencode()
+        base.reencode()
+        assert len(base.reencodes.keys()) == 1
+
+    def test_reencode_filepath(self):
+        base = BaseAudio("test.mp3", {"extension": "ogg"})
+        reenc = base.reencode()
+        assert reenc == "test-%s.ogg" % (
+            crc32(bytes(json_dumps({"extension": "ogg"}, sort_keys=True), "utf-8"))
+        )
 
 
 # HACK because AudioFactory.base_audios does not seem to be reset between tests.
