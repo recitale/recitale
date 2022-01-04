@@ -1,7 +1,19 @@
 import pytest
+import subprocess
 from unittest.mock import mock_open, patch
 
 import recitale.utils
+
+
+def test_cryptojs_openssl_compatible_encrypt():
+    plaintext = b"this is a test"
+    passphrase = "passphrase"
+    encrypted = recitale.utils.cryptojs_openssl_compatible_encrypt(
+        plaintext, passphrase
+    )
+    openssl = "openssl enc -d -base64 -A -aes-256-cbc -md md5 -pass pass:" + passphrase
+    decrypted = subprocess.check_output(openssl.split(), input=encrypted)
+    assert decrypted == plaintext
 
 
 def test_remove_superficial_options():

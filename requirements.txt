@@ -4,5 +4,6 @@ path.py
 ruamel.yaml
 future
 pillow>=6
+pycryptodomex
 imagesize
 tqdm
