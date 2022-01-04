@@ -1,8 +1,10 @@
 import logging
 import sys
 import base64
-import shlex
-import subprocess
+from Cryptodome.Cipher import AES
+from Cryptodome.Hash import MD5
+from Cryptodome.Random import get_random_bytes
+from Cryptodome.Util.Padding import pad
 from email.utils import formatdate
 from datetime import datetime
 from builtins import str
@@ -69,16 +71,60 @@ def makeform(template, settings, gallery_settings):
     return str(form, "utf-8")
 
 
+def evp_bytestokey(hash_class, salt, passphrase, iterations, key_size):
+    """
+    Python implementation of key and IV derivation from passphrase
+    as implemented in OpenSSL EVP_BytesToKey, c.f.
+    https://github.com/openssl/openssl/blob/38fc02a7084438e384e152effa84d4bf085783c9/crypto/evp/evp_key.c#L78-L154
+    """
+    block = None
+    key = b""
+
+    while len(key) < key_size:
+        hasher = hash_class.new()
+        if block:
+            hasher.update(block)
+        hasher.update(passphrase)
+        hasher.update(salt)
+        block = hasher.digest()
+        for i in range(iterations - 1):
+            block = hash_class.new(block).digest()
+        key = key + block
+
+    return key
+
+
+def cryptojs_openssl_compatible_encrypt(plaintext, passphrase):
+    # CryptoJS is only capable of reading this very specific AES-256-CBC encrypted
+    # content with key and IV derivation from OpenSSL specific implementation.
+    # Moreover, it needs to follow OpenSSL specific format which is the following:
+    # Base64 encoded string of:
+    # - ASCII representation of "Salted__" (8 bytes)
+    # - salt (8 bytes)
+    # - AES-256-CBC encrypted content
+    #
+    # The key and IV used to encrypt the content are derived from a passphrase
+    # by using the salt and the OpenSSL specific derivation called
+    # EVP_BytesToKey. The key is 32-byte long for AES-256 and the IV is 16-byte
+    # long for CBC.
+
+    salt = get_random_bytes(8)
+    keyiv = evp_bytestokey(MD5, salt, bytes(passphrase, "utf-8"), 1, 32 + 16)
+    iv = keyiv[32 : 32 + 16]
+    key = keyiv[:32]
+
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    encrypted_data = cipher.encrypt(pad(plaintext, AES.block_size))
+    return base64.b64encode("Salted__".encode("ascii") + salt + encrypted_data)
+
+
 def encrypt(password, template, gallery_path, settings, gallery_settings):
     encrypted_template = template.get_template("encrypted.html")
     index_plain = Path("build").joinpath(gallery_path, "index.html")
-    cmd = "openssl enc -e -base64 -A -aes-256-cbc -md md5 -pass pass:%s" % shlex.quote(
-        password
-    )
-    with open(index_plain, "r") as f:
-        encrypted = subprocess.check_output(
-            shlex.split(cmd), stdin=f, stderr=subprocess.DEVNULL
-        )
+
+    with open(index_plain, "rb") as f:
+        encrypted = cryptojs_openssl_compatible_encrypt(f.read(), password)
+
     html = encrypted_template.render(
         settings=settings,
         form=makeform(template, settings, gallery_settings),
