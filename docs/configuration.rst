@@ -256,6 +256,8 @@ If you want to protect all the website by password::
   title: Gallery
   password: my_super_password
 
+Please note that only the HTML page will be password-protected. Media content such as images, videos and audio files can still be accessed without password if someone knows or guesses their URL inside a password-protected gallery.
+
 Date locale
 ~~~~~~~~~~~
 
