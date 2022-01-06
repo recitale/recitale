@@ -12,3 +12,5 @@ graft recitale/themes
 
 prune example
 exclude example
+prune containers
+exclude containers

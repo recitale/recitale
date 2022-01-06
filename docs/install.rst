@@ -50,15 +50,11 @@ Installation in virtualenv
 
     pip3 install recitale
    
-Docker
-------
+Container
+---------
 
-Get the Docker image::
+A container image is available at ghcr.io/recitale/recitale. One can build their website by running the following command::
 
-    docker pull beudbeud/prosopopee
-    
-Run::
+   docker run --rm -v <PATH_TO_GALLERY_SOURCE>:/var/www ghcr.io/recitale/recitale build
 
-    docker run --rm -v $(pwd):/site beudbeud/prosopopee
-    
-More informations https://hub.docker.com/r/beudbeud/prosopopee/
+See https://github.com/orgs/recitale/packages/container/package/recitale%2Frecitale for fetching instructions and the list of all available images.
