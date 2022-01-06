@@ -106,9 +106,15 @@ Options:
   --version     Show version.
 ```
 
-## Docker
+## Container
 
-https://hub.docker.com/r/beudbeud/prosopopee/
+A container image is available at ghcr.io/recitale/recitale. One can build their website by running the following command:
+
+```
+docker run --rm -v <PATH_TO_GALLERY_SOURCE>:/var/www ghcr.io/recitale/recitale build
+```
+
+See https://github.com/orgs/recitale/packages/container/package/recitale%2Frecitale for fetching instructions and the list of all available images.
 
 ## Licence 
 
