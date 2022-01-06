@@ -29,12 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Notifications
     steps:
-      - name: Put release tag into env
-        run: echo "VERSION_TAG=$( echo $GITHUB_REF | grep --only-matching '[^/]*$' )" >> $GITHUB_ENV
       - name: IRC notification
         uses: Gottox/irc-message-action@v2
         with:
           channel: '#recitale'
           nickname: github-bot
           message: |-
-            recitale ${{ env.VERSION_TAG }} was just released. See ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ env.VERSION_TAG }} for the release notes.
+            recitale ${{ github.ref_name }} was just released. See ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }} for the release notes.
