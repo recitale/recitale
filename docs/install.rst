@@ -57,4 +57,4 @@ A container image is available at ghcr.io/recitale/recitale. One can build their
 
    docker run --rm -v <PATH_TO_GALLERY_SOURCE>:/var/www ghcr.io/recitale/recitale build
 
-See https://github.com/orgs/recitale/packages/container/package/recitale%2Frecitale for fetching instructions and the list of all available images.
+See https://github.com/recitale/recitale/pkgs/container/recitale for fetching instructions and the list of all available images.
