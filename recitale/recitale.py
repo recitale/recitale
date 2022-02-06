@@ -482,6 +482,9 @@ def image_params(img, options):
         params["quality"] = options["quality"]
     if "dpi" in img.info:
         params["dpi"] = img.info["dpi"]
+        # For following formats, dpi is of type IFDRational which is not serializable
+        if format in ["JPEG", "MPO", "TIFF"]:
+            params["dpi"] = (float(params["dpi"][0]), float(params["dpi"][1]))
     if format == "JPEG" or format == "MPO":
         params["subsampling"] = JpegImagePlugin.get_sampling(img)
 
