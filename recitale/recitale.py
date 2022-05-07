@@ -875,7 +875,6 @@ def main():
     theme = settings["settings"].get("theme", "exposure")
     date_locale = settings["settings"].get("date_locale")
     templates = get_gallery_templates(theme, date_locale=date_locale)
-    templates.add_extension("jinja2.ext.with_")
 
     if Path("custom.js").exists():
         shutil.copy(Path("custom.js"), Path(".").joinpath("build", "", "static", "js"))
