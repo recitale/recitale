@@ -357,9 +357,6 @@ padding-bottom: 7em;
 }
 
 .bordered-picture video {
-  width: 77%;
-  margin-left: 11.5%;
-  margin-right: 11.5%;
   object-fit: fill;
 }
 
