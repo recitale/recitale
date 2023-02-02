@@ -93,6 +93,8 @@ a {
 
 .pictures-line .picture img {
   width: 100%;
+  max-height: 100vh;
+  object-fit: contain;
 }
 
 .pictures-line .separator {
@@ -347,6 +349,7 @@ padding-bottom: 7em;
   left: 0;
   z-index: 0;
   width: 100%;
+  max-height: 100vh;
 }
 
 .full-picture video {
