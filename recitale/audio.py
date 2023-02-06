@@ -61,9 +61,12 @@ class BaseAudio(AudioCommon):
             bytes(json_dumps(self.options, sort_keys=True), "utf-8")
         )
 
+    def _add_reencode(self, reencode):
+        return self.reencodes.setdefault(reencode.filepath, reencode)
+
     def reencode(self):
         reencode = Reencode(self.filepath, self.chksum_opt, self.options["extension"])
-        return self.reencodes.setdefault(reencode.filepath, reencode).filepath.name
+        return self._add_reencode(reencode).filepath.name
 
 
 # TODO: add support for looking into parent directories (name: ../other_gallery/pic.jpg)

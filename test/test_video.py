@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 from zlib import crc32
 
-from recitale.video import BaseVideo, VideoFactory
+from recitale.video import BaseVideo, VideoFactory, Thumbnail, Reencode
 from recitale.utils import remove_superficial_options
 
 
@@ -79,9 +79,16 @@ class TestBaseVideo:
 
     def test_reencode_same_obj(self):
         base = BaseVideo({"name": "test.mp4", "extension": "webm"}, {})
-        reenc1 = base.reencode((100, 200))
-        reenc2 = base.reencode((100, 200))
+        reencode1 = Reencode(
+            base.filepath, base.chksum_opt, (100, 200), base.options["extension"]
+        )
+        reencode2 = Reencode(
+            base.filepath, base.chksum_opt, (100, 200), base.options["extension"]
+        )
+        reenc1 = base._add_reencode(reencode1)
+        reenc2 = base._add_reencode(reencode2)
         assert len(base.reencodes.keys()) == 1
+        assert reencode1 is not reencode2
         assert reenc1 is reenc2
 
     def test_reencode_diff_resize(self):
@@ -101,9 +108,12 @@ class TestBaseVideo:
 
     def test_thumbnail_same_obj(self):
         base = BaseVideo({"name": "test.mp4"}, {})
-        reenc1 = base.thumbnail((100, 200))
-        reenc2 = base.thumbnail((100, 200))
+        thumbnail1 = Thumbnail(base.filepath, base.chksum_opt, (100, 200))
+        thumbnail2 = Thumbnail(base.filepath, base.chksum_opt, (100, 200))
+        reenc1 = base._add_thumbnail(thumbnail1)
+        reenc2 = base._add_thumbnail(thumbnail2)
         assert len(base.thumbnails.keys()) == 1
+        assert thumbnail1 is not thumbnail2
         assert reenc1 is reenc2
 
     def test_thumbnail_diff_resize(self):

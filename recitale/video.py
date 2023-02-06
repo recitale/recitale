@@ -86,15 +86,21 @@ class BaseVideo(VideoCommon):
             bytes(json_dumps(self.options, sort_keys=True), "utf-8")
         )
 
+    def _add_reencode(self, reencode):
+        return self.reencodes.setdefault(reencode.filepath, reencode)
+
     def reencode(self, size):
         reencode = Reencode(
             self.filepath, self.chksum_opt, size, self.options["extension"]
         )
-        return self.reencodes.setdefault(reencode.filepath, reencode).filepath.name
+        return self._add_reencode(reencode).filepath.name
+
+    def _add_thumbnail(self, thumbnail):
+        return self.thumbnails.setdefault(thumbnail.filepath, thumbnail)
 
     def thumbnail(self, size):
         thumbnail = Thumbnail(self.filepath, self.chksum_opt, size)
-        return self.thumbnails.setdefault(thumbnail.filepath, thumbnail).filepath.name
+        return self._add_thumbnail(thumbnail).filepath.name
 
 
 # TODO: add support for looking into parent directories (name: ../other_gallery/pic.jpg)
