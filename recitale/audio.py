@@ -1,6 +1,7 @@
 import logging
 import shlex
 import subprocess
+import urllib.parse
 
 from json import dumps as json_dumps
 from json import loads as json_loads
@@ -66,7 +67,7 @@ class BaseAudio(AudioCommon):
 
     def reencode(self):
         reencode = Reencode(self.filepath, self.chksum_opt, self.options["extension"])
-        return self._add_reencode(reencode).filepath.name
+        return urllib.parse.quote(self._add_reencode(reencode).filepath.name)
 
 
 # TODO: add support for looking into parent directories (name: ../other_gallery/pic.jpg)

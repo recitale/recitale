@@ -1,6 +1,7 @@
 import logging
 import shlex
 import subprocess
+import urllib.parse
 
 from json import dumps as json_dumps
 from json import loads as json_loads
@@ -93,14 +94,14 @@ class BaseVideo(VideoCommon):
         reencode = Reencode(
             self.filepath, self.chksum_opt, size, self.options["extension"]
         )
-        return self._add_reencode(reencode).filepath.name
+        return urllib.parse.quote(self._add_reencode(reencode).filepath.name)
 
     def _add_thumbnail(self, thumbnail):
         return self.thumbnails.setdefault(thumbnail.filepath, thumbnail)
 
     def thumbnail(self, size):
         thumbnail = Thumbnail(self.filepath, self.chksum_opt, size)
-        return self._add_thumbnail(thumbnail).filepath.name
+        return urllib.parse.quote(self._add_thumbnail(thumbnail).filepath.name)
 
 
 # TODO: add support for looking into parent directories (name: ../other_gallery/pic.jpg)
