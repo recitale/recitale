@@ -131,6 +131,13 @@ class TestBaseVideo:
             crc32(bytes(json_dumps({}, sort_keys=True), "utf-8"))
         )
 
+    def test_thumbnail_space_filepath(self):
+        base = BaseVideo({"name": "test with space.mp4"}, {})
+        reenc = base.thumbnail((100, 200))
+        assert reenc == "test%%20with%%20space-%s-100x200.jpg" % (
+            crc32(bytes(json_dumps({}, sort_keys=True), "utf-8"))
+        )
+
 
 # HACK because VideoFactory.base_vids does not seem to be reset between tests.
 @pytest.fixture
