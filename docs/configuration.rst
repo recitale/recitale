@@ -131,6 +131,36 @@ example for MP4::
       video: "libx264"
       extension: mp4
 
+Audio converter
+~~~~~~~~~~~~~~~
+
+recitale can use ffmpeg to reencode audio and can be configured if needed::
+
+  title: Gallery
+  settings:
+    ffmpeg_audio:
+      binary: "ffmpeg"
+      loglevel: "error"
+      audio: "libvorbis"
+      extension: "mp3"
+
+The meaning of the currently supported FFMPEG settings is as follows:
+
+ * `binary` sets the binary to use to convert the audio (ffmpeg by default)
+ * `loglevel` sets the logging level used by the library
+ * `audio` sets the audio codec
+ * `extension` sets the extension of output file
+
+example for MP3::
+
+  title: Gallery
+  settings:
+    ffmpeg_audio:
+      binary: "ffmpeg"
+      loglevel: "error"
+      audio: "libmp3lame"
+      extension: "mp3"
+
 Light Mode
 ~~~~~~~~~~
 
