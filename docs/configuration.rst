@@ -270,6 +270,15 @@ If you want to use non-based on LC_TIME locale for human-readable dates on galle
   settings:
     date_locale: ru_RU
 
+Hide gallery date
+~~~~~~~~~~~~~~~~~
+
+By default, recitale shows dates for all galleries in the landing page, just below each gallery title. However, you can hide it by setting the "show_date" setting to "False" in **root** settings.yaml::
+
+  title: My exploration of the outside world
+  sub_title: it's a scary place, don't go there
+  show_date: False
+
 Gallery settings.yaml
 ---------------------
 
