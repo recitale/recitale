@@ -107,7 +107,7 @@ recitale can use ffmpeg or libav and each can be configured if needed::
       video: "libvpx"
       other: "-qmin 10 -qmax 42 -maxrate 500k -bufsize 1500k"
 
-The meaning of the currently supported FFMEG or LIBAV's settings is as follows :
+The meaning of the currently supported FFMPEG or LIBAV's settings is as follows:
 
  * `binary` sets the binary to use to convert the video (ffmpeg or avconv)
  * `loglevel` sets the logging level used by the library
