@@ -2,7 +2,6 @@ import logging
 import os
 import sys
 from time import gmtime, strftime
-from glob import glob
 from jinja2 import Template
 from pathlib import Path
 from PIL import Image
@@ -19,8 +18,7 @@ sections:
 {% set nb = namespace(value=range(2,5)|random) %}
 {% set count = namespace(value=0) %}
 {% for file in files %}
-{% set file = file.split('/') %}
-         - {{ file[-1] }}
+         - {{ file.name }}
 {% if count.value != nb.value %}
 {% set count.value = count.value + 1 %}
 {% elif not loop.last %}
@@ -69,7 +67,7 @@ def build_template(folder, force):
         return
 
     for files in types:
-        files_grabbed.extend(glob(str(Path(".").joinpath(folder, files))))
+        files_grabbed.extend(Path(folder).glob(files))
     template = Template(DATA, trim_blocks=True)
     msg = template.render(
         title=gallery_settings["title"],
@@ -87,7 +85,10 @@ def autogen(folder=None, force=False):
         build_template(folder, force)
         return
 
-    for settings in glob("./*/**/settings.yaml", recursive=True):
-        folder = settings.rsplit("/", 1)[0]
-        if not glob(folder + "/**/settings.yaml"):
+    for settings in Path(".").rglob("settings.yaml"):
+        # Ignore "root" settings.yaml
+        if settings.samefile(Path(".").joinpath("settings.yaml")):
+            continue
+        folder = settings.parent
+        if not list(Path(folder).glob("*/**/settings.yaml")):
             build_template(folder, force)
