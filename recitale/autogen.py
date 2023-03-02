@@ -75,8 +75,7 @@ def build_template(folder, force):
         cover=gallery_settings["cover"],
         files=sorted(files_grabbed, key=get_exif),
     )
-    settings = open(Path(".").joinpath(folder, "settings.yaml").resolve(), "w")
-    settings.write(msg)
+    Path(folder).joinpath("settings.yaml").write_text(msg)
     logger.info("Generation: %s gallery", folder)
 
 
