@@ -69,7 +69,7 @@ def build_template(folder, force):
         return
 
     for files in types:
-        files_grabbed.extend(glob(Path(".").joinpath(folder, files)))
+        files_grabbed.extend(glob(str(Path(".").joinpath(folder, files))))
     template = Template(DATA, trim_blocks=True)
     msg = template.render(
         title=gallery_settings["title"],
