@@ -753,7 +753,7 @@ def reencode_audio(base):
             logger.info("Skipped: %s is already generated", reencode.filepath)
             return
 
-        command = basecmd + shlex.quote(filepath)
+        command = basecmd + shlex.quote(str(filepath))
         command = command.format(**base.options)
 
         proc = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
