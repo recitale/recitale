@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-from time import gmtime, strftime
+from time import gmtime, strftime, strptime
 from jinja2 import Template
 from pathlib import Path
 from PIL import Image
@@ -33,6 +33,8 @@ logger = logging.getLogger("recitale." + __name__)
 
 types = ("*.JPG", "*.jpg", "*.JPEG", "*.jpeg", "*.png", "*.PNG")
 
+TIME_FORMAT = "%Y:%m:%d %H:%M:00"
+
 
 def get_exif(filename):
     exif = Image.open(filename).getexif()
@@ -42,7 +44,7 @@ def get_exif(filename):
         if ctime is not None:
             return ctime
 
-    return strftime("%Y:%m:%d %H:%M:00", gmtime(os.path.getmtime(filename)))
+    return strftime(TIME_FORMAT, gmtime(os.path.getmtime(filename)))
 
 
 def build_template(folder, force):
@@ -58,10 +60,6 @@ def build_template(folder, force):
         logger.error("%s/settings.yaml: 'title' setting missing", folder)
         sys.exit(1)
 
-    if "date" not in gallery_settings:
-        logger.error("%s/settings.yaml: 'date' setting missing", folder)
-        sys.exit(1)
-
     if "sections" in gallery_settings and force is not True:
         logger.info("Skipped: %s gallery is already generated", folder)
         return
@@ -73,10 +71,14 @@ def build_template(folder, force):
     files = sorted(files_grabbed, key=get_exif)
 
     cover = gallery_settings.get("cover", files[0].name)
+    date = gallery_settings.get("date")
+    if not date:
+        date_from_exif = strptime(get_exif(files[0]), TIME_FORMAT)
+        date = strftime("%Y-%m-%d", date_from_exif)
 
     msg = template.render(
         title=gallery_settings["title"],
-        date=gallery_settings["date"],
+        date=date,
         cover=cover,
         files=files,
     )
