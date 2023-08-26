@@ -123,22 +123,21 @@ class TestBuildTemplate:
         recitale.autogen.build_template(".", False)
         assert "Skipped: Nothing to do in" in caplog.text
 
-    @pytest.mark.parametrize(
-        "d",
-        [
-            {},
-            {"title": "test"},
-            {"title": "test", "date": "20230610"},
-            {"title": "test", "cover": "test.jpg"},
-            {"date": "20230610", "cover": "test.jpg"},
-        ],
-    )
-    def test_missing_required_key(self, caplog, d):
+    def test_missing_required_title(self, caplog):
         with pytest.raises(SystemExit) as sysexit, patch(
-            "recitale.autogen.load_settings", return_value=d
+            "recitale.autogen.load_settings", return_value={}
         ):
             recitale.autogen.build_template(".", False)
-        assert "You need configure first, the title, date and cover in" in caplog.text
+        assert ": 'title' setting missing" in caplog.text
+        assert sysexit.type == SystemExit
+        assert sysexit.value.code == 1
+
+    def test_missing_required_date(self, caplog):
+        with pytest.raises(SystemExit) as sysexit, patch(
+            "recitale.autogen.load_settings", return_value={"title": "test"}
+        ):
+            recitale.autogen.build_template(".", False)
+        assert ": 'date' setting missing" in caplog.text
         assert sysexit.type == SystemExit
         assert sysexit.value.code == 1
 
@@ -155,6 +154,64 @@ class TestBuildTemplate:
         caplog.set_level(logging.INFO)
         recitale.autogen.build_template(".", False)
         assert " gallery is already generated" in caplog.text
+
+    @patch(
+        "recitale.autogen.load_settings",
+        return_value={"title": "test", "date": "20230610"},
+    )
+    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:00")
+    def test_missing_cover(self, patch_exif, patch_load):
+        with TemporaryDirectory() as td:
+            f = "test.png"
+            Path(td).joinpath(f).touch()
+            recitale.autogen.build_template(td, False)
+            generated = Path(td).joinpath("settings.yaml")
+            assert generated.exists()
+            with open(generated) as content:
+                assert (
+                    "".join(content.readlines())
+                    == f"""title: test
+date: 20230610
+cover: {f}
+sections:
+  - type: pictures-group
+    images:
+      -
+         - {f}
+"""
+                )
+
+    @patch(
+        "recitale.autogen.load_settings",
+        return_value={"title": "test", "date": "20230610"},
+    )
+    @patch(
+        "recitale.autogen.get_exif",
+        side_effect=["2023:06:10 10:10:00", "2016:10:08 01:01:00"],
+    )
+    def test_missing_cover_oldest_picked(self, patch_exif, patch_load):
+        with TemporaryDirectory() as td:
+            f = "test.png"
+            Path(td).joinpath(f).touch()
+            fold = "test-oldest.png"
+            Path(td).joinpath(fold).touch()
+            recitale.autogen.build_template(td, False)
+            generated = Path(td).joinpath("settings.yaml")
+            assert generated.exists()
+            with open(generated) as content:
+                assert (
+                    "".join(content.readlines())
+                    == f"""title: test
+date: 20230610
+cover: {fold}
+sections:
+  - type: pictures-group
+    images:
+      -
+         - {fold}
+         - {f}
+"""
+                )
 
     @patch(
         "recitale.autogen.load_settings",
