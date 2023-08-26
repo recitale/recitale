@@ -132,15 +132,6 @@ class TestBuildTemplate:
         assert sysexit.type == SystemExit
         assert sysexit.value.code == 1
 
-    def test_missing_required_date(self, caplog):
-        with pytest.raises(SystemExit) as sysexit, patch(
-            "recitale.autogen.load_settings", return_value={"title": "test"}
-        ):
-            recitale.autogen.build_template(".", False)
-        assert ": 'date' setting missing" in caplog.text
-        assert sysexit.type == SystemExit
-        assert sysexit.value.code == 1
-
     @patch(
         "recitale.autogen.load_settings",
         return_value={
@@ -154,6 +145,32 @@ class TestBuildTemplate:
         caplog.set_level(logging.INFO)
         recitale.autogen.build_template(".", False)
         assert " gallery is already generated" in caplog.text
+
+    @patch(
+        "recitale.autogen.load_settings",
+        return_value={"title": "test", "cover": "test.jpg"},
+    )
+    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:00")
+    def test_missing_date(self, patch_exif, patch_load):
+        with TemporaryDirectory() as td:
+            f = "test.png"
+            Path(td).joinpath(f).touch()
+            recitale.autogen.build_template(td, False)
+            generated = Path(td).joinpath("settings.yaml")
+            assert generated.exists()
+            with open(generated) as content:
+                assert (
+                    "".join(content.readlines())
+                    == f"""title: test
+date: 2023-06-10
+cover: test.jpg
+sections:
+  - type: pictures-group
+    images:
+      -
+         - {f}
+"""
+                )
 
     @patch(
         "recitale.autogen.load_settings",

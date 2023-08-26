@@ -16,7 +16,7 @@ You need
 1. Create a folder
 2. Put all pics you want
 3. Create settings.yaml file in the folder
-4. Add title and date keys in folder/settings.yaml. Optionally provide a cover key, otherwise it is inferred from the oldest file in the gallery.
+4. Add title key in folder/settings.yaml. Optionally provide a cover and date key, otherwise they are inferred from the oldest file in the gallery.
 5. Use `recitale autogen -d folder`
 
 
