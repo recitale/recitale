@@ -54,12 +54,12 @@ def build_template(folder, force):
         logger.info("Skipped: Nothing to do in %s gallery", folder)
         return
 
-    if any(req not in gallery_settings for req in ["title", "date", "cover"]):
-        logger.error(
-            "You need configure first, the title, date and cover in %s/settings.yaml "
-            "to use autogen",
-            folder,
-        )
+    if "title" not in gallery_settings:
+        logger.error("%s/settings.yaml: 'title' setting missing", folder)
+        sys.exit(1)
+
+    if "date" not in gallery_settings:
+        logger.error("%s/settings.yaml: 'date' setting missing", folder)
         sys.exit(1)
 
     if "sections" in gallery_settings and force is not True:
@@ -69,11 +69,16 @@ def build_template(folder, force):
     for files in types:
         files_grabbed.extend(Path(folder).glob(files))
     template = Template(DATA, trim_blocks=True)
+
+    files = sorted(files_grabbed, key=get_exif)
+
+    cover = gallery_settings.get("cover", files[0].name)
+
     msg = template.render(
         title=gallery_settings["title"],
         date=gallery_settings["date"],
-        cover=gallery_settings["cover"],
-        files=sorted(files_grabbed, key=get_exif),
+        cover=cover,
+        files=files,
     )
     Path(folder).joinpath("settings.yaml").write_text(msg)
     logger.info("Generation: %s gallery", folder)
