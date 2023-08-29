@@ -22,7 +22,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
-from .cache import CACHE
+from .cache import Cache
 from .utils import encrypt, rfc822, load_settings, CustomFormatter
 from .autogen import autogen
 from .__init__ import __version__
@@ -505,7 +505,9 @@ def noncached_images(base):
     for thumbnail in base.thumbnails.values():
         filepath = Path("build") / thumbnail.filepath
 
-        if CACHE.needs_to_be_generated(base.filepath, str(filepath), params):
+        if noncached_images.shared["cache"].needs_to_be_generated(
+            base.filepath, str(filepath), params
+        ):
             noncached_images.shared["queue"].put(1)
             return base
 
@@ -564,7 +566,9 @@ def render_thumbnails(base):
     for thumbnail in base.thumbnails.values():
         filepath = Path("build") / thumbnail.filepath
 
-        if not CACHE.needs_to_be_generated(base.filepath, str(filepath), params):
+        if not render_thumbnails.shared["cache"].needs_to_be_generated(
+            base.filepath, str(filepath), params
+        ):
             continue
 
         # Needed because im.thumbnail replaces the original image
@@ -632,11 +636,13 @@ def render_thumbnails(base):
             filepath,
             thumbnail.size,
         )
-        CACHE.cache_picture(base.filepath, str(filepath), params)
+        render_thumbnails.shared["cache"].cache_picture(
+            base.filepath, str(filepath), params
+        )
     render_thumbnails.shared["queue"].put(1)
 
 
-def render_video(base):
+def render_video(cache, base):
     logger.debug("(%s) Rendering thumbnails and reencodes", base.filepath)
     basecmd = "{binary} -loglevel {loglevel} -y -i " + shlex.quote(str(base.filepath))
 
@@ -649,7 +655,7 @@ def render_video(base):
         for reencode in base.reencodes.values():
             logger.info("Reencoding (%s)" % base.filepath)
             filepath = Path("build") / reencode.filepath
-            if not CACHE.needs_to_be_generated(
+            if not cache.needs_to_be_generated(
                 base.filepath, str(filepath), base.options
             ):
                 continue
@@ -695,7 +701,7 @@ def render_video(base):
                 )
                 return
 
-            CACHE.cache_picture(base.filepath, str(filepath), base.options)
+            cache.cache_picture(base.filepath, str(filepath), base.options)
 
     if not base.thumbnails:
         return
@@ -704,7 +710,7 @@ def render_video(base):
     command = ""
     for thumbnail in base.thumbnails.values():
         filepath = Path("build") / thumbnail.filepath
-        if not CACHE.needs_to_be_generated(base.filepath, str(filepath), base.options):
+        if not cache.needs_to_be_generated(base.filepath, str(filepath), base.options):
             continue
 
         width, height = thumbnail.size
@@ -733,10 +739,10 @@ def render_video(base):
         return
 
     for thumbnail in uncached:
-        CACHE.cache_picture(base.filepath, str(filepath), base.options)
+        cache.cache_picture(base.filepath, str(filepath), base.options)
 
 
-def reencode_audio(base):
+def reencode_audio(cache, base):
     logger.debug("(%s) Rendering reencodes", base.filepath)
     basecmd = "{binary} -loglevel {loglevel} -progress /dev/stdout -i " + shlex.quote(
         str(base.filepath)
@@ -749,7 +755,7 @@ def reencode_audio(base):
     for reencode in base.reencodes.values():
         logger.info("Reencoding (%s)" % base.filepath)
         filepath = Path("build") / reencode.filepath
-        if not CACHE.needs_to_be_generated(base.filepath, str(filepath), base.options):
+        if not cache.needs_to_be_generated(base.filepath, str(filepath), base.options):
             logger.info("Skipped: %s is already generated", reencode.filepath)
             return
 
@@ -783,7 +789,7 @@ def reencode_audio(base):
             )
             return
 
-        CACHE.cache_picture(base.filepath, str(filepath), base.options)
+        cache.cache_picture(base.filepath, str(filepath), base.options)
 
 
 def set_func_args(initargs):
@@ -946,6 +952,8 @@ def main():
         logger.info("Success: HTML file building without error")
         sys.exit(0)
 
+    cache = Cache()
+
     # If recitale is started without any argument, 'build' is assumed but the jobs parameter
     # is not part of the namespace, so set its default to None (or 'number of available CPU
     # treads')
@@ -957,7 +965,12 @@ def main():
         with Pool(
             jobs,
             initializer=set_func_args,
-            initargs=(({"queue": pbar_queue}, [noncached_images, render_thumbnails]),),
+            initargs=(
+                (
+                    {"queue": pbar_queue, "cache": cache},
+                    [noncached_images, render_thumbnails],
+                ),
+            ),
         ) as pool:
             logger.info("Generating list of thumbnails to create...")
 
@@ -1004,15 +1017,15 @@ def main():
                 VideoFactory.base_vids.values(),
                 desc="Generating video thumbnails and resizes",
             ):
-                render_video(video)
+                render_video(cache, video)
 
         if len(AudioFactory.base_audios):
             for audio in tqdm(
                 AudioFactory.base_audios.values(), desc="Generating audio reencodes"
             ):
-                reencode_audio(audio)
+                reencode_audio(cache, audio)
     finally:
-        CACHE.cache_dump()
+        cache.cache_dump()
 
 
 if __name__ == "__main__":

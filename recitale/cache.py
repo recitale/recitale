@@ -73,6 +73,3 @@ class Cache:
 
     def cache_dump(self):
         json.dump(dict(self.cache), open(self.cache_file_path, "w"))
-
-
-CACHE = Cache()
