@@ -99,14 +99,6 @@ parser_autogen.add_argument(
 )
 
 
-DEFAULTS = {
-    "rss": True,
-    "share": False,
-    "settings": {},
-    "show_date": True,
-    "include": [],
-}
-
 SETTINGS = {
     "gm": {
         "quality": 75,
@@ -146,6 +138,14 @@ class TCPServerV4(socketserver.TCPServer):
 
 
 def get_settings():
+    DEFAULTS = {
+        "rss": True,
+        "share": False,
+        "settings": {},
+        "show_date": True,
+        "include": [],
+    }
+
     settings = load_settings(".")
 
     for key, value in list(DEFAULTS.items()):
