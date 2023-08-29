@@ -786,6 +786,22 @@ def reencode_audio(base):
         CACHE.cache_picture(base.filepath, str(filepath), base.options)
 
 
+def set_func_args(initargs):
+    shared, funcs = initargs
+    for func in funcs:
+        func.shared = shared
+
+
+def handle_pbar(desc, queue, pbar_len):
+    with tqdm(
+        total=pbar_len,
+        desc=desc,
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} | ETA: {remaining}",
+    ) as pbar:
+        while queue.get():
+            pbar.update()
+
+
 logger = logging.getLogger("recitale")
 
 
@@ -936,12 +952,6 @@ def main():
     jobs = args.jobs if args.cmd else None
 
     try:
-
-        def set_func_args(initargs):
-            shared, funcs = initargs
-            for func in funcs:
-                func.shared = shared
-
         pbar_queue = Manager().Queue()
 
         with Pool(
@@ -949,16 +959,6 @@ def main():
             initializer=set_func_args,
             initargs=(({"queue": pbar_queue}, [noncached_images, render_thumbnails]),),
         ) as pool:
-
-            def handle_pbar(desc, queue, pbar_len):
-                with tqdm(
-                    total=pbar_len,
-                    desc=desc,
-                    bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} | ETA: {remaining}",
-                ) as pbar:
-                    while queue.get():
-                        pbar.update()
-
             logger.info("Generating list of thumbnails to create...")
 
             pbar = Process(
