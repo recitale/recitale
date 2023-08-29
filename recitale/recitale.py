@@ -506,10 +506,10 @@ def noncached_images(base):
         filepath = Path("build") / thumbnail.filepath
 
         if CACHE.needs_to_be_generated(base.filepath, str(filepath), params):
-            noncached_images.queue.put(1)
+            noncached_images.shared["queue"].put(1)
             return base
 
-    noncached_images.queue.put(1)
+    noncached_images.shared["queue"].put(1)
 
 
 def render_thumbnails(base):
@@ -633,7 +633,7 @@ def render_thumbnails(base):
             thumbnail.size,
         )
         CACHE.cache_picture(base.filepath, str(filepath), params)
-    render_thumbnails.queue.put(1)
+    render_thumbnails.shared["queue"].put(1)
 
 
 def render_video(base):
@@ -937,17 +937,17 @@ def main():
 
     try:
 
-        def set_queue(initargs):
-            queue, funcs = initargs
+        def set_func_args(initargs):
+            shared, funcs = initargs
             for func in funcs:
-                func.queue = queue
+                func.shared = shared
 
         pbar_queue = Manager().Queue()
 
         with Pool(
             jobs,
-            initializer=set_queue,
-            initargs=((pbar_queue, [noncached_images, render_thumbnails]),),
+            initializer=set_func_args,
+            initargs=(({"queue": pbar_queue}, [noncached_images, render_thumbnails]),),
         ) as pool:
 
             def handle_pbar(desc, queue, pbar_len):
