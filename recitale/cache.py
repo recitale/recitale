@@ -16,12 +16,7 @@ logger = logging.getLogger("recitale." + __name__)
 class Cache:
     cache_file_path = os.path.join(os.getcwd(), ".recitale_cache")
 
-    def __init__(self, json):
-        # fix: I need to keep a reference to json because for whatever reason
-        # modules are set to None during python shutdown thus totally breaking
-        # the __del__ call to save the cache
-        # This wonderfully stupid behavior has been fixed in 3.4 (which nobody uses)
-        self.json = json
+    def __init__(self):
         if os.path.exists(os.path.join(os.getcwd(), ".recitale_cache")):
             cache = json.load(open(self.cache_file_path, "r"))
         else:
@@ -77,7 +72,7 @@ class Cache:
         }
 
     def cache_dump(self):
-        self.json.dump(dict(self.cache), open(self.cache_file_path, "w"))
+        json.dump(dict(self.cache), open(self.cache_file_path, "w"))
 
 
-CACHE = Cache(json=json)
+CACHE = Cache()
