@@ -104,7 +104,6 @@ DEFAULTS = {
     "share": False,
     "settings": {},
     "show_date": True,
-    "test": False,
     "include": [],
 }
 
@@ -836,9 +835,6 @@ def main():
         )
         sys.exit(1)
 
-    if args.cmd == "test":
-        DEFAULTS["test"] = True
-
     if args.cmd == "preview":
         if not Path("build").exists():
             logger.error("Please build the website before launch preview")
@@ -948,7 +944,7 @@ def main():
 
     build_index(settings, front_page_galleries_cover, templates)
 
-    if DEFAULTS["test"] is True:
+    if args.cmd == "test":
         logger.info("Success: HTML file building without error")
         sys.exit(0)
 
