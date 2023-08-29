@@ -43,62 +43,6 @@ def loglevel(string):
     )
 
 
-loglevel_parser = ArgumentParser(add_help=False)
-loglevel_parser.add_argument(
-    "--log-level",
-    default=logging.WARNING,
-    type=loglevel,
-    help="Configure the logging level",
-)
-
-parser = ArgumentParser(
-    description="Static site generator for your story.", parents=[loglevel_parser]
-)
-parser.add_argument("--version", action="version", version="%(prog)s " + __version__)
-
-subparser = parser.add_subparsers(dest="cmd")
-parser_build = subparser.add_parser(
-    "build", help="Generate static site", parents=[loglevel_parser]
-)
-parser_build.add_argument(
-    "-j",
-    "--jobs",
-    default=None,
-    type=int,
-    help="Specifies number of jobs (thumbnail generations) to run simultaneously. Default: number "
-    "of threads available on the system",
-)
-subparser.add_parser(
-    "test", help="Verify all your yaml data", parents=[loglevel_parser]
-)
-subparser.add_parser(
-    "preview", help="Start preview webserver on port 9000", parents=[loglevel_parser]
-)
-subparser.add_parser("deploy", help="Deploy your website", parents=[loglevel_parser])
-parser_autogen = subparser.add_parser(
-    "autogen", help="Generate gallery automaticaly", parents=[loglevel_parser]
-)
-group = parser_autogen.add_mutually_exclusive_group(required=True)
-group.add_argument(
-    "-d",
-    dest="folder",
-    metavar="folder",
-    help="folder to use for automatic gallery generation",
-)
-group.add_argument(
-    "--all",
-    action="store_const",
-    const=None,
-    dest="folder",
-    help="find all folders with settings.yaml for automatic gallery generation",
-)
-parser_autogen.add_argument(
-    "--force",
-    action="store_true",
-    help="**DESTRUCTIVE** force regeneration of gallery even if sections are already defined.",
-)
-
-
 SETTINGS = {
     "gm": {
         "quality": 75,
@@ -811,6 +755,66 @@ logger = logging.getLogger("recitale")
 
 
 def main():
+    loglevel_parser = ArgumentParser(add_help=False)
+    loglevel_parser.add_argument(
+        "--log-level",
+        default=logging.WARNING,
+        type=loglevel,
+        help="Configure the logging level",
+    )
+
+    parser = ArgumentParser(
+        description="Static site generator for your story.", parents=[loglevel_parser]
+    )
+    parser.add_argument(
+        "--version", action="version", version="%(prog)s " + __version__
+    )
+
+    subparser = parser.add_subparsers(dest="cmd")
+    parser_build = subparser.add_parser(
+        "build", help="Generate static site", parents=[loglevel_parser]
+    )
+    parser_build.add_argument(
+        "-j",
+        "--jobs",
+        default=None,
+        type=int,
+        help="Specifies number of jobs (thumbnail generations) to run simultaneously. Default: "
+        "number of threads available on the system",
+    )
+    subparser.add_parser(
+        "test", help="Verify all your yaml data", parents=[loglevel_parser]
+    )
+    subparser.add_parser(
+        "preview",
+        help="Start preview webserver on port 9000",
+        parents=[loglevel_parser],
+    )
+    subparser.add_parser(
+        "deploy", help="Deploy your website", parents=[loglevel_parser]
+    )
+    parser_autogen = subparser.add_parser(
+        "autogen", help="Generate gallery automaticaly", parents=[loglevel_parser]
+    )
+    group = parser_autogen.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        "-d",
+        dest="folder",
+        metavar="folder",
+        help="folder to use for automatic gallery generation",
+    )
+    group.add_argument(
+        "--all",
+        action="store_const",
+        const=None,
+        dest="folder",
+        help="find all folders with settings.yaml for automatic gallery generation",
+    )
+    parser_autogen.add_argument(
+        "--force",
+        action="store_true",
+        help="**DESTRUCTIVE** force regeneration of gallery even if sections are already defined.",
+    )
     args = parser.parse_args()
 
     handler = logging.StreamHandler()
