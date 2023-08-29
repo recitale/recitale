@@ -10,7 +10,7 @@ from recitale.utils import remove_superficial_options
 
 @pytest.fixture
 def cache():
-    return Cache(json=json)
+    return Cache()
 
 
 class TestCache:
@@ -21,7 +21,7 @@ class TestCache:
     def test_load_cache(self, mock_ospath):
         cache_json = {"version": CACHE_VERSION, "some": "value"}
         with patch("builtins.open", mock_open(read_data=json.dumps(cache_json))):
-            cache = Cache(json=json)
+            cache = Cache()
 
         assert dict(cache.cache) == cache_json
 
@@ -31,7 +31,7 @@ class TestCache:
     )
     def test_load_old_cache(self, mock_ospath, cache_dict):
         with patch("builtins.open", mock_open(read_data=json.dumps(cache_dict))):
-            cache = Cache(json=json)
+            cache = Cache()
 
         assert dict(cache.cache) == {"version": CACHE_VERSION}
 
