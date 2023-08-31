@@ -145,7 +145,7 @@ def get_settings():
 
 def get_local_date_filter(date_locale):
     if date_locale is None:
-        date_locale = default_locale("LC_TIME")
+        date_locale = default_locale("LC_TIME") or "en_US_POSIX"
 
     def local_date(value, date_format="dd MMMM yyyy"):
         return format_date(date=value, format=date_format, locale=date_locale)
