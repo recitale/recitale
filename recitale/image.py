@@ -81,7 +81,7 @@ class BaseImage(ImageCommon):
 
     def thumbnail(self, size):
         thumbnail = Thumbnail(self.filepath, self.chksum_opt, size)
-        return urllib.parse.quote(self._add_thumbnail(thumbnail).filepath.name)
+        return urllib.parse.quote(str(self._add_thumbnail(thumbnail).filepath))
 
 
 # TODO: add support for looking into parent directories (name: ../other_gallery/pic.jpg)

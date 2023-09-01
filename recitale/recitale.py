@@ -538,6 +538,10 @@ def render_thumbnails(base):
             thumbnail.size,
         )
         try:
+            # if filepath does not exist, create the intermediate directories first
+            if not os.path.exists(os.path.dirname(filepath)):
+                os.makedirs(os.path.dirname(filepath))
+
             im.save(filepath, **params)
         except OSError as e:
             # Work-around for:
