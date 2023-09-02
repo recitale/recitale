@@ -43,13 +43,13 @@
       {% if video %}
       <div class="gallery-cover">
           <video autoplay loop muted class="fillWidth">
-	      <source src="{{gallery.link}/{{ vid }}" type="video/webm" data-source="{{gallery.link}}/{{ vid }}" data-format="vp8" data-extension="webm">
+	      <source src="{{gallery.link}}/{{ vid }}" type="video/webm" data-source="{{gallery.link}}/{{ vid }}" data-format="vp8" data-extension="webm">
           </video>
 	  <img class="fillWidth" alt="" src="{{ gallery.link }}/{{ video.thumbnail((None, 900)) }}">
       </div>
       {% set video = "" %}
       {% else %}
-      <div class="gallery-cover" style="background-image: url('{{ gallery.link }}/{{ cover.thumbnail((None, 900)) }}');"></div>
+      <div class="gallery-cover" style="background-image: url('{{ cover.thumbnail((None, 900), gallery.name, gallery.link) }}');"></div>
       {% endif %}
     </div><!-- comment tricks against space between inline-block
     -->{% endfor %}

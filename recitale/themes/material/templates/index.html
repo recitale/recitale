@@ -35,7 +35,7 @@
       </div>
       {% else %}
       {% set cover = Image.get(gallery.link, gallery.cover) %}
-      <div class="gallery-cover" style="background-image: url('{{ gallery.link }}/{{ cover.thumbnail((None, 900)) }}'), url('{{ gallery.link }}{{ cover.thumbnail((None, 150)) }}');"></div>
+      <div class="gallery-cover" style="background-image: url('{{ cover.thumbnail((None, 900), gallery.name, gallery.link) }}'), url('{{ cover.thumbnail((None, 150), gallery.name, gallery.link) }}');"></div>
       {% endif %}
     </div><!-- comment tricks against space between inline-block
     -->{% endfor %}

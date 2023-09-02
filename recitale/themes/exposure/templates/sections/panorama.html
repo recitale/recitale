@@ -1,4 +1,4 @@
 {% set image = Image.get(link, section.image) %}
 <section class="panorama">
-  <img src="/{{ image.thumbnail((None, 800)) }}">
+  <img src="{{ image.thumbnail((None, 800)) }}">
 </section>

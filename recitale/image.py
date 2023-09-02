@@ -79,9 +79,25 @@ class BaseImage(ImageCommon):
     def _add_thumbnail(self, thumbnail):
         return self.thumbnails.setdefault(thumbnail.filepath, thumbnail)
 
-    def thumbnail(self, size):
+    def thumbnail(self, size, gallery_name = None, gallery_link = None):
         thumbnail = Thumbnail(self.filepath, self.chksum_opt, size)
-        return urllib.parse.quote(str(self._add_thumbnail(thumbnail).filepath))
+
+        # allows to use covers from sub-gallery
+        # when no gallery.link or gallery.name is given, keep the existing behaviour.
+        # This ensures backward compatibility with templates
+        if gallery_link is None or gallery_name is None:
+            return urllib.parse.quote(self._add_thumbnail(thumbnail).filepath.name)
+        else: 
+            # otherwise, compute the relative path of the thumbnail 
+            # thumbnail.url = thumbnail.filepath - (gallery.link - gallery.name)
+            
+            # first, remove the name from the gallery link path 
+            short = str(gallery_link).removesuffix(f'{gallery_name}')
+            # then, remove this short path from the thumbnail URL 
+            thumbnail_path = str(self._add_thumbnail(thumbnail).filepath).removeprefix(short)
+
+            return urllib.parse.quote(thumbnail_path)
+
 
 
 # TODO: add support for looking into parent directories (name: ../other_gallery/pic.jpg)

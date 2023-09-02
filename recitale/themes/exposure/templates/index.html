@@ -14,7 +14,7 @@
   <hr>
   <a href="../">
     <div id="logo" src="static/img/logo.svg">
-      Back
+      Home
     </div>
   </a>
 </div>
@@ -53,9 +53,9 @@
       {% else %}
       {% set cover = Image.get(gallery.link, gallery.cover) %}
       {% if no_big_gallery_cover %}
-      <div class="gallery-cover" style="background-image: url('/{{ cover.thumbnail((None, 900)) }}'), url('/{{ cover.thumbnail((None, 150)) }}');"></div>
+      <div class="gallery-cover" style="background-image: url('{{ cover.thumbnail((None, 900), gallery.name, gallery.link) }}'), url('{{ cover.thumbnail((None, 150), gallery.name, gallery.link) }}');"></div>
       {% else %}
-      <div class="gallery-cover" style="background-image: url('/{{ cover.thumbnail((None, 1366)) }}'), url('/{{ cover.thumbnail((None, 900)) }}');"></div>
+      <div class="gallery-cover" style="background-image: url('{{ cover.thumbnail((None, 1366), gallery.name, gallery.link) }}'), url('{{ cover.thumbnail((None, 900), gallery.name, gallery.link) }}');"></div>
       {% endif %}
       {% endif %}
     </div><!-- comment tricks against space between inline-block
