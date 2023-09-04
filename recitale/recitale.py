@@ -401,6 +401,7 @@ def build_index(
     html = index_template.render(
         settings=settings,
         galleries=galleries_cover,
+        gallery_settings=gallery_settings,
         sub_index=sub_index,
         Image=ImageFactory,
         Video=VideoFactory,

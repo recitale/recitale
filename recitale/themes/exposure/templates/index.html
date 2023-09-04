@@ -10,6 +10,10 @@
 
 {% block logo %}
 {% if sub_index %}
+
+{% set title = gallery_settings.title %}
+{% set sub_title = gallery_settings.sub_title %}
+
 <div class="back-to-home">
   <hr>
   <a href="../">
@@ -19,8 +23,17 @@
   </a>
 </div>
 {% else %}
+
+set title = settings.title %}
+{% set sub_title = settings.sub_title %}
+
 <img id="logo" src="static/img/logo.svg"/>
 {% endif %}
+
+<h1>{{ title }}</h1>
+{% if sub_title %}<h4>{{ sub_title }}</h4>{% endif %}
+<hr>
+
 {% endblock %}
 
 {% block content %}
