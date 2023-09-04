@@ -23,9 +23,7 @@
     <div class="gallery-header">
       {% block logo %}
       {% endblock %}
-      <h1>{{ settings.title }}</h1>
-      {% if settings.sub_title %}<h4>{{ settings.sub_title }}</h4>{% endif %}
-      <hr>
+
       {% if settings.menu %}
       {% include 'menu.html' %}
       {% endif -%}
