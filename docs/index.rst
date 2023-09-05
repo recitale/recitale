@@ -6,11 +6,11 @@ For those of you who don't know what exposure.co is, it allows you to tell a sto
 
 You can find example usages here:
 
- * http://surleschemins.fr
- * http://media.faimaison.net/photos/galerie/
+ * https://surleschemins.fr
+ * https://media.faimaison.net/photos/galerie/
  * https://www.thebrownianmovement.org/
- * http://outside.browny.pink
- * http://such.life
+ * https://outside.browny.pink
+ * https://such.life
  * http://www.street-art.me
 
 Why

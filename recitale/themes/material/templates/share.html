@@ -2,8 +2,8 @@
 <div class="container home center-align">
   <p>Share this story</p>
     <a class="btn-floating grey lighten-3" href="https://twitter.com/share?text={{ gallery.name }}&url={{absolute_url}}{%if gallery.tags %}&hashtags={% for tag in gallery.tags -%}{{ tag }}{% if not loop.lirst and not loop.last %},{% endif %}{% endfor -%}{% endif -%}"  target="_blank"><i class="fa fa-twitter-square grey-text"></i></a>
-    <a class="btn-floating grey lighten-3" href="http://www.facebook.com/share.php?u={{absolute_url}}" target="_blank"><i class="fa fa-facebook-official grey-text"></i>
+    <a class="btn-floating grey lighten-3" href="https://www.facebook.com/share.php?u={{absolute_url}}" target="_blank"><i class="fa fa-facebook-official grey-text"></i>
     </a>
-    <a class="btn-floating grey lighten-3" href="http://www.pinterest.com/pin/create/button/?url={{absolute_url}}" target="_blank"><i class="fa fa-pinterest-square grey-text"></i></a>
+    <a class="btn-floating grey lighten-3" href="https://www.pinterest.com/pin/create/button/?url={{absolute_url}}" target="_blank"><i class="fa fa-pinterest-square grey-text"></i></a>
     <a class="btn-floating grey lighten-3" href="https://plus.google.com/share?url={{absolute_url}}" target="_blank"><i class="fa fa-google-plus-square grey-text"></i></a>
 </div>
