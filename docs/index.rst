@@ -10,7 +10,6 @@ You can find example usages here:
  * https://media.faimaison.net/photos/galerie/
  * https://www.thebrownianmovement.org/
  * https://outside.browny.pink
- * https://such.life
  * http://www.street-art.me
 
 Why
