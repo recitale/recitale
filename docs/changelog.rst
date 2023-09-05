@@ -87,7 +87,7 @@ Thx to all new contributors!
 0.6 (2017-07-14)
  
  * Compatibility python 2 and 3
- * Possibility to add custom css and js http://prosopopee.readthedocs.io/en/latest/theming.html
+ * Possibility to add custom css and js https://prosopopee.readthedocs.io/en/latest/theming.html
  * Add reverse option by titoko https://prosopopee.readthedocs.io/en/latest/configuration.html#reverse
 
 0.5 (2017-06-04)
