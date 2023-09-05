@@ -43,7 +43,7 @@
       {% if video %}
       <div class="gallery-cover">
           <video autoplay loop muted class="fillWidth">
-	      <source src="{{gallery.link}/{{ vid }}" type="video/webm" data-source="{{gallery.link}}/{{ vid }}" data-format="vp8" data-extension="webm">
+	      <source src="{{gallery.link}}/{{ vid }}" type="video/webm" data-source="{{gallery.link}}/{{ vid }}" data-format="vp8" data-extension="webm">
           </video>
 	  <img class="fillWidth" alt="" src="{{ gallery.link }}/{{ video.thumbnail((None, 900)) }}">
       </div>
