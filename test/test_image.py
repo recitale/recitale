@@ -46,7 +46,7 @@ class TestBaseImage:
     ):
         base = BaseImage({"name": "test.jpg", "resize": "50%", "test": "test123"}, {})
         copy = base.copy()
-        mock_rm_sup_opt.called_once_with(
+        mock_rm_sup_opt.assert_called_once_with(
             {"name": "test.jpg", "resize": "50%", "test": "test123"}
         )
         assert copy == "test-%s-100x150.jpg" % (
