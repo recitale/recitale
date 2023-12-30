@@ -1,6 +1,6 @@
 Babel
 jinja2>=2.9
-ruamel.yaml
+ruamel.yaml<0.18.0
 future
 pillow>=6
 pycryptodomex
