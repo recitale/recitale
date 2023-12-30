@@ -46,9 +46,9 @@
       {% set format = settings.ffmpeg.extension %}
       <div class="gallery-cover">
         <video autoplay loop muted class="fillWidth">
-	  <source src="{{ gallery.link }}/{{ vid }}" type="video/{{ format }}">
+	  <source src="{{ gallery.name }}/{{ vid }}" type="video/{{ format }}">
         </video>
-	<img class="fillWidth" alt="" src="{{ gallery.link }}/{{ video.thumbnail((None, 900)) }}">
+	<img class="fillWidth" alt="" src="{{ gallery.name }}/{{ video.thumbnail((None, 900)) }}">
       </div>
       {% else %}
       {% set cover = Image.get(gallery.link, gallery.cover) %}
