@@ -195,7 +195,6 @@ Themes
 recitale supports different themes. As for now, only 3 themes are available:
 
  * the default one called "exposure"
- * "material" based on materialcss
  * light 
 
 To specify the theme, add the "theme" key in your "settings" key or your
@@ -204,7 +203,7 @@ To specify the theme, add the "theme" key in your "settings" key or your
   title: My exploration of the outside world
   sub_title: it's a scary place, don't go there
   settings:
-    theme: material
+    theme: light
 
 Licence
 ~~~~~~~
