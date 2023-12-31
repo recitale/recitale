@@ -33,7 +33,7 @@ logger = logging.getLogger("recitale." + __name__)
 
 types = ("*.JPG", "*.jpg", "*.JPEG", "*.jpeg", "*.png", "*.PNG")
 
-TIME_FORMAT = "%Y:%m:%d %H:%M:00"
+TIME_FORMAT = "%Y:%m:%d %H:%M:%S"
 
 
 def get_exif(filename):
