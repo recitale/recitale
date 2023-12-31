@@ -296,14 +296,14 @@ class TestGetExif:
             p.return_value.getexif.return_value = None
             assert (
                 recitale.autogen.get_exif("example/first_gallery/stuff.png")
-                == "2021:10:27 19:24:00"
+                == "2021:10:27 19:24:08"
             )
 
     @patch("recitale.autogen.os.path.getmtime", return_value=1635362648.7638042)
     def test_no_datetime_exifs(self, patched_getmtime):
         assert (
             recitale.autogen.get_exif("example/first_gallery/stuff.png")
-            == "2021:10:27 19:24:00"
+            == "2021:10:27 19:24:08"
         )
 
     @pytest.mark.parametrize("exif", [0x9003, 0x9004, 0x0132])
