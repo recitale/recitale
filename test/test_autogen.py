@@ -150,7 +150,7 @@ class TestBuildTemplate:
         "recitale.autogen.load_settings",
         return_value={"title": "test", "cover": "test.jpg"},
     )
-    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:00")
+    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:10")
     def test_missing_date(self, patch_exif, patch_load):
         with TemporaryDirectory() as td:
             f = "test.png"
@@ -176,7 +176,7 @@ sections:
         "recitale.autogen.load_settings",
         return_value={"title": "test", "date": "20230610"},
     )
-    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:00")
+    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:10")
     def test_missing_cover(self, patch_exif, patch_load):
         with TemporaryDirectory() as td:
             f = "test.png"
@@ -204,7 +204,7 @@ sections:
     )
     @patch(
         "recitale.autogen.get_exif",
-        side_effect=["2023:06:10 10:10:00", "2016:10:08 01:01:00"],
+        side_effect=["2023:06:10 10:10:10", "2016:10:08 01:01:01"],
     )
     def test_missing_cover_oldest_picked(self, patch_exif, patch_load):
         with TemporaryDirectory() as td:
@@ -234,7 +234,7 @@ sections:
         "recitale.autogen.load_settings",
         return_value={"title": "test", "cover": "test.jpg", "date": "20230610"},
     )
-    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:00")
+    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:10")
     @pytest.mark.parametrize("filext", recitale.autogen.types)
     def test_file_extensions(self, patch_exif, patch_load, filext):
         with TemporaryDirectory() as td:
@@ -266,7 +266,7 @@ sections:
             "sections": [],
         },
     )
-    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:00")
+    @patch("recitale.autogen.get_exif", return_value="2023:06:10 10:10:10")
     def test_overwrite_existing(self, patch_exif, patch_load):
         with TemporaryDirectory() as td:
             f = "test.JPG"
@@ -309,8 +309,8 @@ class TestGetExif:
     @pytest.mark.parametrize("exif", [0x9003, 0x9004, 0x0132])
     def test_datetime_exifs(self, exif):
         with patch("recitale.autogen.Image.open") as p:
-            p.return_value.getexif.return_value = {exif: "2023:06:10 10:10:00"}
+            p.return_value.getexif.return_value = {exif: "2023:06:10 10:10:10"}
             assert (
                 recitale.autogen.get_exif("example/first_gallery/stuff.png")
-                == "2023:06:10 10:10:00"
+                == "2023:06:10 10:10:10"
             )
