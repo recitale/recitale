@@ -44,7 +44,7 @@ recitale currently supports:
  * Mobile friendly
  * Caching for fast rendering
  * Multi level gallery
- * Support themes (default, material, light)
+ * Support themes (exposure (default), light)
  * Password access (encrypt page)
  * Image lazy loading
  * Night Mode
