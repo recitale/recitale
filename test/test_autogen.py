@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 from unittest.mock import patch
-from tempfile import TemporaryDirectory
+from tempfile import TemporaryDirectory, NamedTemporaryFile
 import logging
 
 import recitale.autogen
@@ -10,14 +10,34 @@ import recitale.autogen
 class TestAutogen:
     @pytest.mark.parametrize("force", [True, False])
     def test_folder_force(self, force):
-        with patch("recitale.autogen.build_template"):
-            recitale.autogen.autogen(".", force)
-            recitale.autogen.build_template.assert_called_once_with(".", force)
+        with patch("recitale.autogen.build_template"), TemporaryDirectory() as td:
+            Path(td).joinpath("settings.yaml").touch()
+            recitale.autogen.autogen(td, force)
+            recitale.autogen.build_template.assert_called_once_with(td, force)
 
     def test_folder_no_force(self):
+        with patch("recitale.autogen.build_template"), TemporaryDirectory() as td:
+            Path(td).joinpath("settings.yaml").touch()
+            recitale.autogen.autogen(td)
+            recitale.autogen.build_template.assert_called_once_with(td, False)
+
+    def test_folder_not_exists(self, caplog):
         with patch("recitale.autogen.build_template"):
-            recitale.autogen.autogen(".")
-            recitale.autogen.build_template.assert_called_once_with(".", False)
+            recitale.autogen.autogen("dir-does-not-exist")
+            recitale.autogen.build_template.assert_not_called()
+            assert "dir-does-not-exist directory does not exist" in caplog.text
+
+    def test_folder_not_dir(self, caplog):
+        with patch("recitale.autogen.build_template"), NamedTemporaryFile() as fd:
+            recitale.autogen.autogen(fd.name)
+            recitale.autogen.build_template.assert_not_called()
+            assert "%s must be a directory" % fd.name in caplog.text
+
+    def test_folder_no_settings(self, caplog):
+        with patch("recitale.autogen.build_template"), TemporaryDirectory() as td:
+            recitale.autogen.autogen(td)
+            recitale.autogen.build_template.assert_not_called()
+            assert "%s directory must contain a settings.yaml" % td in caplog.text
 
     def test_all_folders_exclude_root(self):
         def only_replace_cwd(arg):

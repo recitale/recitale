@@ -88,6 +88,18 @@ def build_template(folder, force):
 
 def autogen(folder=None, force=False):
     if folder:
+        if not Path(folder).exists():
+            logger.error("%s directory does not exist", folder)
+            return
+
+        if not Path(folder).is_dir():
+            logger.error("%s must be a directory", folder)
+            return
+
+        if not Path(folder).joinpath("settings.yaml").exists():
+            logger.error("%s directory must contain a settings.yaml", folder)
+            return
+
         build_template(folder, force)
         return
 
