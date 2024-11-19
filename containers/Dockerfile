@@ -1,4 +1,4 @@
-from python:slim-bullseye
+from python:slim-bookworm
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y ffmpeg
 
