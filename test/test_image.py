@@ -58,7 +58,7 @@ class TestBaseImage:
         base = BaseImage({"name": "test.jpg", "resize": "50"}, {})
         with pytest.raises(SystemExit) as sysexit:
             base.copy()
-            assert sysexit.type == SystemExit
+            assert sysexit.type is SystemExit
             assert sysexit.value.code == 1
             assert (
                 caplog.text == "(test.jpg) specified resize setting is not a percentage"
@@ -98,7 +98,7 @@ class TestImageFactory:
     def test_image_dict_without_name(self):
         with pytest.raises(SystemExit) as sysexit:
             ImageFactory.get("gallery", {"notname": "test.jpg"})
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     def test_same_path_same_image(self):

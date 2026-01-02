@@ -149,7 +149,7 @@ class TestBuildTemplate:
         ):
             recitale.autogen.build_template(".", False)
         assert ": 'title' setting missing" in caplog.text
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     @patch(

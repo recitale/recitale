@@ -38,7 +38,7 @@ class TestLoadSettings:
         with pytest.raises(SystemExit) as sysexit:
             recitale.utils.load_settings(".")
 
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     def test_bad_settings_yaml(self):
@@ -47,7 +47,7 @@ class TestLoadSettings:
         ):
             recitale.utils.load_settings(".")
 
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     def test_empty_settings_yaml(self):
@@ -56,7 +56,7 @@ class TestLoadSettings:
         ):
             recitale.utils.load_settings(".")
 
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     @patch("recitale.utils.yaml.safe_load", return_value=[])
@@ -64,7 +64,7 @@ class TestLoadSettings:
         with pytest.raises(SystemExit) as sysexit, patch("builtins.open", mock_open()):
             recitale.utils.load_settings(".")
 
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     @patch("recitale.utils.yaml.safe_load", return_value={})
@@ -72,7 +72,7 @@ class TestLoadSettings:
         with pytest.raises(SystemExit) as sysexit, patch("builtins.open", mock_open()):
             recitale.utils.load_settings(".")
 
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     @patch(
@@ -83,7 +83,7 @@ class TestLoadSettings:
         with pytest.raises(SystemExit) as sysexit, patch("builtins.open", mock_open()):
             recitale.utils.load_settings(".")
 
-        assert sysexit.type == SystemExit
+        assert sysexit.type is SystemExit
         assert sysexit.value.code == 1
 
     @patch("recitale.utils.yaml.safe_load", return_value={"title": "test"})
