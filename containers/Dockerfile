@@ -1,6 +1,6 @@
-from python:slim-bookworm
+FROM python:slim-trixie
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y ffmpeg
+RUN DEBIAN_FRONTEND=noninteractive apt-get install --update --no-install-recommends -y ffmpeg
 
 ARG VERSION
 
