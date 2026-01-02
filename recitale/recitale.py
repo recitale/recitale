@@ -156,11 +156,10 @@ def get_local_date_filter(date_locale):
 def get_gallery_templates(
     theme, gallery_path="", parent_templates=None, date_locale=None
 ):
-    theme_path = Path(__file__).parent.joinpath("themes", theme).exists()
+    themes_dir = Path(__file__).parent.joinpath("themes")
+    theme_path = themes_dir.joinpath(theme).exists()
 
-    available_themes = theme, "', '".join(
-        str(path) for path in Path(__file__).parent.joinpath("themes").iterdir()
-    )
+    available_themes = theme, "', '".join(str(path) for path in themes_dir.iterdir())
 
     if not theme_path:
         logger.error(
@@ -172,13 +171,11 @@ def get_gallery_templates(
 
     templates_dir = [
         Path(".").joinpath("templates").resolve(),
-        Path(__file__).parent.joinpath("themes", theme, "templates"),
+        themes_dir.joinpath(theme, "templates"),
     ]
 
     if theme != "exposure":
-        templates_dir.append(
-            Path(__file__).parent.joinpath("themes", "exposure", "templates")
-        )
+        templates_dir.append(themes_dir.joinpath("exposure", "templates"))
 
     subgallery_templates = Environment(
         loader=FileSystemLoader(templates_dir), trim_blocks=True
@@ -202,7 +199,7 @@ def get_gallery_templates(
 
     else:
         shutil.copytree(
-            Path(__file__).parent.joinpath("themes", theme, "static"),
+            themes_dir.joinpath(theme, "static"),
             Path(".").joinpath("build", gallery_path, "static"),
         )
 
