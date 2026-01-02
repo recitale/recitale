@@ -628,7 +628,7 @@ def render_video(cache, base):
                 bar_format="{l_bar}{bar}| {n_fmt}s/{total_fmt}s | ETA: {remaining}",
             ) as pbar:
                 for content in proc.stdout:
-                    m = re.search(r"out_time_us=(.*)\\n", str(content))
+                    m = re.search(r"out_time_us=(\d+)\\n", str(content))
                     if m and m.group(1):
                         us = int(m.group(1))
                         reencoded_secs = us // 1000000
@@ -716,7 +716,7 @@ def reencode_audio(cache, base):
             bar_format="{l_bar}{bar}| {n_fmt}s/{total_fmt}s | ETA: {remaining}",
         ) as pbar:
             for content in proc.stdout:
-                m = re.search(r"out_time_us=(.*)\\n", str(content))
+                m = re.search(r"out_time_us=(\d+)\\n", str(content))
                 if m and m.group(1):
                     us = int(m.group(1))
                     reencoded_secs = us // 1000000
