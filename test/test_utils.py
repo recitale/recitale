@@ -42,8 +42,9 @@ class TestLoadSettings:
         assert sysexit.value.code == 1
 
     def test_bad_settings_yaml(self):
-        with pytest.raises(SystemExit) as sysexit, patch(
-            "builtins.open", mock_open(read_data="{}")
+        with (
+            pytest.raises(SystemExit) as sysexit,
+            patch("builtins.open", mock_open(read_data="{}")),
         ):
             recitale.utils.load_settings(".")
 
@@ -51,8 +52,9 @@ class TestLoadSettings:
         assert sysexit.value.code == 1
 
     def test_empty_settings_yaml(self):
-        with pytest.raises(SystemExit) as sysexit, patch(
-            "builtins.open", mock_open(read_data="")
+        with (
+            pytest.raises(SystemExit) as sysexit,
+            patch("builtins.open", mock_open(read_data="")),
         ):
             recitale.utils.load_settings(".")
 

@@ -44,10 +44,10 @@ class TestAutogen:
             directory = get_temp_dir() if arg == "." else arg
             return Path(directory)
 
-        with patch(
-            "recitale.autogen.build_template"
-        ), TemporaryDirectory() as td, patch(
-            "recitale.autogen.Path", side_effect=only_replace_cwd
+        with (
+            patch("recitale.autogen.build_template"),
+            TemporaryDirectory() as td,
+            patch("recitale.autogen.Path", side_effect=only_replace_cwd),
         ):
 
             def get_temp_dir():
@@ -65,10 +65,10 @@ class TestAutogen:
             directory = get_temp_dir() if arg == "." else arg
             return Path(directory)
 
-        with patch(
-            "recitale.autogen.build_template"
-        ), TemporaryDirectory() as td, patch(
-            "recitale.autogen.Path", side_effect=only_replace_cwd
+        with (
+            patch("recitale.autogen.build_template"),
+            TemporaryDirectory() as td,
+            patch("recitale.autogen.Path", side_effect=only_replace_cwd),
         ):
 
             def get_temp_dir():
@@ -98,10 +98,10 @@ class TestAutogen:
             directory = get_temp_dir() if arg == "." else arg
             return Path(directory)
 
-        with patch(
-            "recitale.autogen.build_template"
-        ), TemporaryDirectory() as td, patch(
-            "recitale.autogen.Path", side_effect=only_replace_cwd
+        with (
+            patch("recitale.autogen.build_template"),
+            TemporaryDirectory() as td,
+            patch("recitale.autogen.Path", side_effect=only_replace_cwd),
         ):
 
             def get_temp_dir():
@@ -144,8 +144,9 @@ class TestBuildTemplate:
         assert "Skipped: Nothing to do in" in caplog.text
 
     def test_missing_required_title(self, caplog):
-        with pytest.raises(SystemExit) as sysexit, patch(
-            "recitale.autogen.load_settings", return_value={}
+        with (
+            pytest.raises(SystemExit) as sysexit,
+            patch("recitale.autogen.load_settings", return_value={}),
         ):
             recitale.autogen.build_template(".", False)
         assert ": 'title' setting missing" in caplog.text
