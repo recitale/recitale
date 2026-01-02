@@ -158,12 +158,13 @@ def get_gallery_templates(
 ):
     themes_dir = Path(__file__).parent.joinpath("themes")
 
-    available_themes = theme, "', '".join(str(path) for path in themes_dir.iterdir())
-
     if not themes_dir.joinpath(theme).exists():
+        themes = [path.name for path in themes_dir.iterdir() if path.is_dir()]
+
         logger.error(
-            "'%s' is not an existing theme + available themes are '%s'",
-            *available_themes,
+            "%s is not a valid theme. Available themes are: %s",
+            theme,
+            ", ".join(sorted(themes)),
         )
         sys.exit(1)
 
