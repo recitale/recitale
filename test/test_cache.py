@@ -20,7 +20,7 @@ class TestCache:
     @patch("recitale.cache.os.path.exists", return_value=True)
     def test_load_cache(self, mock_ospath):
         cache_json = {"version": CACHE_VERSION, "some": "value"}
-        with patch("builtins.open", mock_open(read_data=json.dumps(cache_json))):
+        with patch("recitale.cache.open", mock_open(read_data=json.dumps(cache_json))):
             cache = Cache()
 
         assert dict(cache.cache) == cache_json
@@ -30,13 +30,13 @@ class TestCache:
         "cache_dict", [{"version": CACHE_VERSION + 1}, {"some": "value"}]
     )
     def test_load_old_cache(self, mock_ospath, cache_dict):
-        with patch("builtins.open", mock_open(read_data=json.dumps(cache_dict))):
+        with patch("recitale.cache.open", mock_open(read_data=json.dumps(cache_dict))):
             cache = Cache()
 
         assert dict(cache.cache) == {"version": CACHE_VERSION}
 
     def test_dump_cache(self, cache):
-        with patch("builtins.open", mock_open()) as p:
+        with patch("recitale.cache.open", mock_open()) as p:
             cache.cache_dump()
 
         p.assert_called_with(os.path.join(os.getcwd(), ".recitale_cache"), "w")
