@@ -40,6 +40,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
       - name: Build and export to Docker
         id: build
         uses: docker/build-push-action@v6
@@ -57,9 +62,7 @@ jobs:
           build-args: VERSION=${{ github.ref_name }}
           context: containers
           push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          tags: ${{ steps.meta.outputs.tags }}
 
   notification:
     if: ${{ github.repository == 'recitale/recitale' }}
