@@ -63,6 +63,9 @@ jobs:
           context: containers
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          sbom: true
+          provenance: true
 
   notification:
     if: ${{ github.repository == 'recitale/recitale' }}
