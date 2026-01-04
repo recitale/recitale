@@ -51,6 +51,21 @@ Homepage = "https://github.com/recitale/recitale"
 Issues = "https://github.com/recitale/recitale/issues"
 Repository = "https://github.com/recitale/recitale.git"
 
+[tool.coverage.report]
+exclude_lines = [
+	"pragma: no cover",
+	"raise NotImplementedError",
+	"if __name__ == .__main__.:",
+]
+ignore_errors = true
+show_missing = true
+
+[tool.coverage.run]
+branch = true
+source = [
+	"recitale/",
+]
+
 [tool.setuptools]
 packages = [
 	"recitale",

@@ -3,7 +3,6 @@ include *.md
 recursive-include pics *.png
 include LICENSE
 include logo.png
-include .coveragerc
 
 recursive-include docs *.rst
 
