@@ -41,16 +41,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and export to Docker
+        id: build
         uses: docker/build-push-action@v6
         with:
           build-args: VERSION=${{ github.ref_name }}
           context: containers
           load: true
           pull: true
-          tags: ${{ github.repository }}:test
       - name: Minimal test
         run: |
-          docker run --rm -v $PWD/example:/var/www ${{ github.repository }}:test build
+          docker run --rm -v $PWD/example:/var/www ${{ steps.build.outputs.imageid }} build
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
