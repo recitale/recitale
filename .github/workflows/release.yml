@@ -56,7 +56,6 @@ jobs:
         with:
           build-args: VERSION=${{ github.ref_name }}
           context: containers
-          pull: true
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest
