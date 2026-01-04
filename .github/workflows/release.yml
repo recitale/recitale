@@ -23,7 +23,6 @@ jobs:
           path: dist/
 
   pypi-package:
-    if: ${{ github.repository == 'recitale/recitale' }}
     name: Publish package on PyPI
     runs-on: ubuntu-latest
     needs: build
@@ -39,7 +38,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
 
   container:
-    if: ${{ github.repository == 'recitale/recitale' }}
     needs: pypi-package
     runs-on: ubuntu-latest
     permissions:
