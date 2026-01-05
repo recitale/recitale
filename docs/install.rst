@@ -15,10 +15,6 @@ And a video converter like ffmpeg::
 
     apt-get install ffmpeg
 
-or::
-
-    apt-get install libav-tools
-
 For deployment, we need rsync::
   
     apt-get install rsync
