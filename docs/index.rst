@@ -10,6 +10,7 @@ You can find example usages here:
  * https://media.faimaison.net/photos/galerie/
  * https://www.thebrownianmovement.org/
  * https://outside.browny.pink
+ * https://pictures.0leil.net
 
 Why
 ===
