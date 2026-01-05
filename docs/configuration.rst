@@ -188,7 +188,8 @@ To enable the night mode, which is only available for exposure theme (default th
 
 After that you will be able to choose between dark theme or light theme when visiting the website.
 
-.. themes:
+.. _themes:
+
 Themes
 ~~~~~~
 
