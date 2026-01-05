@@ -38,6 +38,10 @@ readme = "README.md"
 requires-python = ">= 3.0"
 
 [project.optional-dependencies]
+docs = [
+	"sphinx",
+	"sphinx_rtd_theme",
+]
 tests = [
 	"pytest",
 	"pytest-cov",
@@ -77,6 +81,7 @@ packages = [
 [tool.tox]
 envlist = [
 	"bandit",
+	"docs",
 	"pytest",
 	"ruff-check",
 	"ruff-format-diff",
@@ -96,6 +101,17 @@ deps = [
 	"bandit",
 ]
 skip_install = true
+
+[tool.tox.env.docs]
+allowlist_externals = [
+	"make",
+]
+commands = [
+	["make", "-C", "docs/", "html"],
+]
+extras = [
+	"docs",
+]
 
 [tool.tox.env.pytest]
 basepython = [
