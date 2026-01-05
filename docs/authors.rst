@@ -18,3 +18,8 @@ By chronological order:
  * eugeneandrienko
  * angelop
  * crypto512
+
+New contributors since recitale forked prosopopée, by chronological order:
+
+ * jboursier
+ * sebsto
