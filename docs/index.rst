@@ -15,7 +15,7 @@ You can find example usages here:
 Why
 ===
 
-I wanted to learn a bit of advanced css and I wanted to self-host my data instead of using exposure.co.
+According to its creator, `prosopopee <https://github.com/Psycojoker/prosopopee>`__ was originally created as they "wanted to learn a bit of advanced css and wanted to self-host data instead of using exposure.co".
 
 Licence
 =======
