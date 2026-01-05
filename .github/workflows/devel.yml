@@ -35,8 +35,8 @@ jobs:
       - name: Install dependencies
         run: |
           set -xe
-          sudo apt update
-          sudo apt install -y --no-install-recommends -qq ffmpeg
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends -qq ffmpeg
           python -VV
           python -m site
           python -m pip install -e .
