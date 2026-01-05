@@ -3,7 +3,7 @@ Authors
 
 By chronological order:
 
- * Bram, launched the project
+ * Bram, launched the prosopopée project
  * Kload
  * opi
  * taziden
@@ -13,3 +13,8 @@ By chronological order:
  * Titoko
  * 0x010C
  * QSchulz
+ * treellama
+ * thatch
+ * eugeneandrienko
+ * angelop
+ * crypto512
