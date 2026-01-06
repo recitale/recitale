@@ -55,7 +55,6 @@ SETTINGS = {
         "binary": "ffmpeg",
         "loglevel": "error",
         "format": "webm",
-        "resolution": "1280x720",
         "vbitrate": "3900k",
         "abitrate": "100k",
         "audio": "libvorbis",

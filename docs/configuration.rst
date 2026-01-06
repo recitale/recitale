@@ -100,7 +100,6 @@ recitale can use ffmpeg or libav and each can be configured if needed::
       binary: "ffmpeg"
       loglevel: "error"
       format: "webm"
-      resolution: "1280x720"
       vbitrate: "3900k"
       abitrate: "100k"
       audio: "libvorbis"
@@ -112,7 +111,6 @@ The meaning of the currently supported FFMPEG or LIBAV's settings is as follows:
  * `binary` sets the binary to use to convert the video (ffmpeg or avconv)
  * `loglevel` sets the logging level used by the library
  * `format` forces input or output file format
- * `resolution` sets frame size
  * `vbitrate` sets video bitrate
  * `abitrate` sets audio bitrate
  * `audio` sets the audio codec
