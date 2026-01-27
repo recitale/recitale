@@ -1,6 +1,49 @@
 on: [push, pull_request]
 
 jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    name: Build distribution package
+    env:
+      # See https://setuptools-scm.readthedocs.io/en/latest/integrations/#publishing-to-pypi-from-cicd
+      SETUPTOOLS_SCM_OVERRIDES_FOR_RECITALE: '{local_scheme = "no-local-version"}'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: '999'
+          fetch-tags: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade build
+      - name: Build distribution package
+        run: python -m build
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v6
+        with:
+          name: python-test-package-distributions
+          path: dist/
+
+  test-pypi-package:
+    name: Publish package on test PyPI
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.repository == 'recitale/recitale' && github.ref_name == 'devel' }}
+    needs: build-test
+    permissions:
+      id-token: write
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v7
+        with:
+          name: python-test-package-distributions
+          path: dist/
+      - name: Publish package on Pypi
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
   tox:
     runs-on: ubuntu-latest
     steps:
