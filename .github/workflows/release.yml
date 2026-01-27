@@ -8,6 +8,8 @@ jobs:
     name: Build distribution package
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-tags: true
       - uses: actions/setup-python@v6
         with:
           python-version: '3.x'

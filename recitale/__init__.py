@@ -1,1 +1,6 @@
-__version__ = "2.0.0a6"
+from importlib.metadata import version, PackageNotFoundError
+
+try:
+    __version__ = version("recitale")
+except PackageNotFoundError:
+    pass

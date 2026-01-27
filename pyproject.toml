@@ -1,7 +1,8 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-	"setuptools >= 77.0.3",
+	"setuptools >= 80",
+	"setuptools_scm[simple] >= 8",
 	"wheel",
 ]
 
@@ -71,13 +72,11 @@ packages = [
 	"recitale",
 ]
 
-[tool.setuptools.dynamic]
-version = {attr = "recitale.__version__"}
+[tool.setuptools_scm]
 
 [tool.tox]
 envlist = [
 	"bandit",
-	"check-manifest",
 	"pytest",
 	"ruff-check",
 	"ruff-format-diff",
@@ -96,16 +95,6 @@ commands = [
 deps = [
 	"bandit",
 ]
-skip_install = true
-
-[tool.tox.env.check-manifest]
-commands = [
-	["{envpython}", "-m", "check_manifest", "{tox_root}",],
-]
-deps = [
-	"check-manifest",
-]
-no_package = true
 skip_install = true
 
 [tool.tox.env.pytest]
