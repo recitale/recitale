@@ -1,14 +1,4 @@
-include *.txt
-include *.md
-recursive-include pics *.png
-include LICENSE
-include logo.png
-
-recursive-include docs *.rst
-
-graft recitale/themes
-
-prune example
-exclude example
-prune containers
-exclude containers
+recursive-exclude example *
+recursive-exclude containers *
+recursive-exclude .github *
+exclude .gitignore
