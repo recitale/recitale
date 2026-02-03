@@ -1,5 +1,5 @@
 <p align="center">
-<img src="logo.png">
+<img width="140px" src="recitale/themes/exposure/static/img/logo.svg">
 </p>
 
 ![GitHub](https://img.shields.io/github/license/recitale/recitale?color=brightgreen)
