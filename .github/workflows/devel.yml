@@ -30,6 +30,7 @@ jobs:
     needs: build-test
     permissions:
       id-token: write
+    environment: test
     steps:
       - name: Download all the dists
         uses: actions/download-artifact@v7
