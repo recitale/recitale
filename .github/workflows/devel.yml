@@ -9,6 +9,8 @@ jobs:
       SETUPTOOLS_SCM_OVERRIDES_FOR_RECITALE: '{local_scheme = "no-local-version"}'
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-tags: true
       - uses: actions/setup-python@v6
         with:
           python-version: '3.x'
