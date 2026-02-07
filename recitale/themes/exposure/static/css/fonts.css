@@ -5,8 +5,7 @@
     src: url('../fonts/montserrat-semibold-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/montserrat-semibold-webfont.woff2') format('woff2'),
          url('../fonts/montserrat-semibold-webfont.woff') format('woff'),
-         url('../fonts/montserrat-semibold-webfont.ttf') format('truetype'),
-         url('../fonts/montserrat-semibold-webfont.svg#montserratsemi_bold') format('svg');
+         url('../fonts/montserrat-semibold-webfont.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
@@ -19,8 +18,7 @@
     src: url('../fonts/montserrat-regular-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/montserrat-regular-webfont.woff2') format('woff2'),
          url('../fonts/montserrat-regular-webfont.woff') format('woff'),
-         url('../fonts/montserrat-regular-webfont.ttf') format('truetype'),
-         url('../fonts/montserrat-regular-webfont.svg#montserratregular') format('svg');
+         url('../fonts/montserrat-regular-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -34,8 +32,7 @@
     src: url('../fonts/crimsontext-bold-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/crimsontext-bold-webfont.woff2') format('woff2'),
          url('../fonts/crimsontext-bold-webfont.woff') format('woff'),
-         url('../fonts/crimsontext-bold-webfont.ttf') format('truetype'),
-         url('../fonts/crimsontext-bold-webfont.svg#crimson_textbold') format('svg');
+         url('../fonts/crimsontext-bold-webfont.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
@@ -47,8 +44,7 @@
     src: url('../fonts/crimsontext-regular-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/crimsontext-regular-webfont.woff2') format('woff2'),
          url('../fonts/crimsontext-regular-webfont.woff') format('woff'),
-         url('../fonts/crimsontext-regular-webfont.ttf') format('truetype'),
-         url('../fonts/crimsontext-regular-webfont.svg#crimson_textroman') format('svg');
+         url('../fonts/crimsontext-regular-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -60,8 +56,7 @@
     src: url('../fonts/crimsontext-italic-webfont.eot?#iefix') format('embedded-opentype'),
          url('../fonts/crimsontext-italic-webfont.woff2') format('woff2'),
          url('../fonts/crimsontext-italic-webfont.woff') format('woff'),
-         url('../fonts/crimsontext-italic-webfont.ttf') format('truetype'),
-         url('../fonts/crimsontext-italic-webfont.svg#crimson_textitalic') format('svg');
+         url('../fonts/crimsontext-italic-webfont.ttf') format('truetype');
     font-weight: normal;
     font-style: italic;
     font-display: swap;
