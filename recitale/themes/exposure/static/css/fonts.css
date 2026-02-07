@@ -1,9 +1,7 @@
 /* Montserrat: sans-serif header font */
 @font-face {
     font-family: 'montserrat';
-    src: url('../fonts/montserrat-semibold-webfont.eot');
-    src: url('../fonts/montserrat-semibold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/montserrat-semibold-webfont.woff2') format('woff2'),
+    src: url('../fonts/montserrat-semibold-webfont.woff2') format('woff2'),
          url('../fonts/montserrat-semibold-webfont.woff') format('woff'),
          url('../fonts/montserrat-semibold-webfont.ttf') format('truetype');
     font-weight: bold;
@@ -14,9 +12,7 @@
 
 @font-face {
     font-family: 'montserrat';
-    src: url('../fonts/montserrat-regular-webfont.eot');
-    src: url('../fonts/montserrat-regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/montserrat-regular-webfont.woff2') format('woff2'),
+    src: url('../fonts/montserrat-regular-webfont.woff2') format('woff2'),
          url('../fonts/montserrat-regular-webfont.woff') format('woff'),
          url('../fonts/montserrat-regular-webfont.ttf') format('truetype');
     font-weight: normal;
@@ -28,9 +24,7 @@
 /* Crimson: serif regular font */
 @font-face {
     font-family: 'crimson';
-    src: url('../fonts/crimsontext-bold-webfont.eot');
-    src: url('../fonts/crimsontext-bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/crimsontext-bold-webfont.woff2') format('woff2'),
+    src: url('../fonts/crimsontext-bold-webfont.woff2') format('woff2'),
          url('../fonts/crimsontext-bold-webfont.woff') format('woff'),
          url('../fonts/crimsontext-bold-webfont.ttf') format('truetype');
     font-weight: bold;
@@ -40,9 +34,7 @@
 
 @font-face {
     font-family: 'crimson';
-    src: url('../fonts/crimsontext-regular-webfont.eot');
-    src: url('../fonts/crimsontext-regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/crimsontext-regular-webfont.woff2') format('woff2'),
+    src: url('../fonts/crimsontext-regular-webfont.woff2') format('woff2'),
          url('../fonts/crimsontext-regular-webfont.woff') format('woff'),
          url('../fonts/crimsontext-regular-webfont.ttf') format('truetype');
     font-weight: normal;
@@ -52,9 +44,7 @@
 
 @font-face {
     font-family: 'crimson';
-    src: url('../fonts/crimsontext-italic-webfont.eot');
-    src: url('../fonts/crimsontext-italic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/crimsontext-italic-webfont.woff2') format('woff2'),
+    src: url('../fonts/crimsontext-italic-webfont.woff2') format('woff2'),
          url('../fonts/crimsontext-italic-webfont.woff') format('woff'),
          url('../fonts/crimsontext-italic-webfont.ttf') format('truetype');
     font-weight: normal;
