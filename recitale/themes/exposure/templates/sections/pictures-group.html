@@ -14,7 +14,7 @@
       {% if image.type == "video" %}
       {% set video = Video.get(link, image) %}
       {% set format = settings.ffmpeg.extension %}
-      {% set vid = video.reencode((1280, 720)) %}
+      {% set vid = video.reencode((None, height)) %}
       {% set ratio = video.ratio %}
       {% else %}
       {% set image = Image.get(link, image) %}
@@ -23,7 +23,7 @@
       <div class="picture caption" style="flex-grow: {{ ratio }}">
         {% if image.type == "video" %}
         <img class="lazy" data-src="{{ video.thumbnail((None, height)) }}" src="./../static/img/11-14.svg" alt="">
-        <video class="lazy" id="{{ vid }}" onclick="goFullscreen('{{ vid }}');" data-src="{{ vid }}" data-poster="{{ video.thumbnail((None, 600)) }}" alt="" loop="loop" preload="none" autoplay muted {% if image.controls %}controls="true"{% endif %}>
+        <video class="lazy" id="{{ vid }}" onclick="goFullscreen('{{ vid }}');" data-src="{{ vid }}" data-poster="{{ video.thumbnail((None, height)) }}" alt="" loop="loop" preload="none" autoplay muted {% if image.controls %}controls="true"{% endif %}>
           <source data-src="{{ vid }}" type="video/{{ format }}">
         </video>
         {% if caption %}

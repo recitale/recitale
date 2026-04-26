@@ -36,7 +36,7 @@
       </a>
       {% if gallery.cover_type == "video" %}
       {% set video = Video.get(gallery.link, gallery.cover) %}
-      {% set vid = video.reencode((1280, 720)) %}
+      {% set vid = video.reencode((None, 900)) %}
       {% else %}
       {% set cover = Image.get(gallery.link, gallery.cover) %}
       {% endif %}
