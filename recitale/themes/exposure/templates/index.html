@@ -42,7 +42,7 @@
       </a>
       {% if gallery.cover_type == "video" %}
       {% set video = Video.get(gallery.link, gallery.cover) %}
-      {% set vid = video.reencode((1280, 720)) %}
+      {% set vid = video.reencode((None, 900)) %}
       {% set format = settings.ffmpeg.extension %}
       <div class="gallery-cover">
         <video autoplay loop muted class="fillWidth">
