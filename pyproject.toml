@@ -15,7 +15,6 @@ classifiers = [
 ]
 dependencies = [
 	"Babel",
-	"imagesize",
 	"jinja2 >= 2.9",
 	"pillow >= 6",
 	"pycryptodomex",

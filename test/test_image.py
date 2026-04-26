@@ -4,31 +4,80 @@ from json import dumps as json_dumps
 from unittest.mock import patch
 from zlib import crc32
 
+from PIL import Image
+
 from recitale.image import BaseImage, ImageFactory
 from recitale.utils import remove_superficial_options
 
 
 class TestBaseImage:
-    @patch("recitale.image.imagesize.get", return_value=(200, 300))
-    def test_first_copy_no_resize(self, mock_imgsz):
-        base = BaseImage({"name": "test.jpg"}, {})
-        base.copy()
-        assert base.copysize == (200, 300)
+    @pytest.mark.parametrize("exif", [None, {0x0112: 1}, {0x0112: 5}])
+    @pytest.mark.parametrize("auto_orient", [False, True])
+    @patch("recitale.image.Image.open")
+    def test_first_copy_no_resize(self, mock_imgsz, auto_orient, exif):
+        def mock_exif():
+            return exif
 
-    @patch("recitale.image.imagesize.get", return_value=(200, 300))
+        type(mock_imgsz.return_value).size = (200, 400)
+        mock_imgsz.return_value.getexif.side_effect = mock_exif
+
+        base = BaseImage({"name": "test.jpg"}, {"auto-orient": auto_orient})
+        base.copy()
+        ratio = base.ratio
+
+        # .ratio should have not called Image.open() again
+        mock_imgsz.assert_called_once()
+
+        if not auto_orient:
+            mock_imgsz.return_value.getexif.assert_not_called()
+            assert base.size == (200, 400)
+            assert base.copysize == (200, 400)
+            assert ratio == 200 / 400
+            return
+
+        mock_imgsz.return_value.getexif.assert_called_once()
+        if exif and exif.get(0x112, 1) == 5:
+            assert base.size == (400, 200)
+            assert base.copysize == (400, 200)
+            assert ratio == 400 / 200
+            return
+
+        assert base.size == (200, 400)
+        assert base.copysize == (200, 400)
+        assert ratio == 200 / 400
+
+    @patch("recitale.image.Image.open")
+    def test_ratio_first(self, mock_imgsz):
+        type(mock_imgsz.return_value).size = (200, 400)
+
+        base = BaseImage({"name": "test.jpg"}, {"auto-orient": False})
+        ratio = base.ratio
+        mock_imgsz.return_value.getexif.assert_not_called()
+        assert base.size == (200, 400)
+        assert ratio == 200 / 400
+
+        mock_imgsz.reset_mock()
+
+        base.copy()
+
+        # BaseImage.copy() shouldn't need to inspect the file after .ratio
+        mock_imgsz.assert_not_called()
+
+    @patch("recitale.image.Image.open", return_value=Image.new("L", (200, 300)))
     def test_two_copies_no_resize(self, mock_imgsz):
         base = BaseImage({"name": "test.jpg"}, {})
         base.copy()
         base.copy()
         assert len(base.thumbnails.keys()) == 1
 
-    @patch("recitale.image.imagesize.get", return_value=(200, 300))
+    @patch("recitale.image.Image.open", return_value=Image.new("L", (200, 300)))
     def test_copy_resize(self, mock_imgsz):
         base = BaseImage({"name": "test.jpg", "resize": "50%"}, {})
         base.copy()
+        assert base.size == (200, 300)
         assert base.copysize == (100, 150)
 
-    @patch("recitale.image.imagesize.get", return_value=(200, 300))
+    @patch("recitale.image.Image.open", return_value=Image.new("L", (200, 300)))
     def test_copy_filepath(self, mock_imgsz):
         base = BaseImage({"name": "test.jpg", "resize": "50%"}, {})
         copy = base.copy()
@@ -40,7 +89,7 @@ class TestBaseImage:
         "recitale.image.remove_superficial_options",
         side_effect=remove_superficial_options,
     )
-    @patch("recitale.image.imagesize.get", return_value=(200, 300))
+    @patch("recitale.image.Image.open", return_value=Image.new("L", (200, 300)))
     def test_copy_filepath_remove_superficial_options(
         self, mock_imgsz, mock_rm_sup_opt
     ):
@@ -53,7 +102,7 @@ class TestBaseImage:
             crc32(bytes(json_dumps({"test": "test123"}, sort_keys=True), "utf-8"))
         )
 
-    @patch("recitale.image.imagesize.get", return_value=(200, 300))
+    @patch("recitale.image.Image.open", return_value=Image.new("L", (200, 300)))
     def test_copy_invalid_resize(self, mock_imgsz, caplog):
         base = BaseImage({"name": "test.jpg", "resize": "50"}, {})
         with pytest.raises(SystemExit) as sysexit:
