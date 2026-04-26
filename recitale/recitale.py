@@ -608,11 +608,11 @@ def render_video(cache, base):
             height = height if height else -1
             command = (
                 reencodecmd
-                + "-s "
+                + '-vf "scale='
                 + str(width)
-                + "x"
+                + ":"
                 + str(height)
-                + " "
+                + '" '
                 + shlex.quote(str(filepath))
             )
             command = command.format(**base.options)
