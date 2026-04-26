@@ -528,7 +528,8 @@ def render_thumbnails(base):
             IGNORE_DIM = 65596
             height = height if height is not None else IGNORE_DIM
             width = width if width is not None else IGNORE_DIM
-            im.thumbnail((width, height), Image.LANCZOS)
+
+        im.thumbnail((width, height), Image.LANCZOS)
 
         logger.debug(
             "(%s) Creating thumbnail %s: size=%s",
