@@ -18,7 +18,7 @@ class ImageCommon:
     @property
     def ratio(self):
         # For when BaseImage.ratio is called before BaseImage.copy() is.
-        if not self.size:
+        if not hasattr(self, "size"):
             self.size = imagesize.get(self.filepath)
         width, height = self.size
         return width / height
