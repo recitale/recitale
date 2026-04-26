@@ -682,6 +682,7 @@ def render_video(cache, base):
         return
 
     for thumbnail in uncached:
+        filepath = Path("build") / thumbnail.filepath
         cache.cache_picture(base.filepath, str(filepath), base.options)
 
 
