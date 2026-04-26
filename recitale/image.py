@@ -1,4 +1,3 @@
-import imagesize
 import logging
 import re
 import sys
@@ -6,6 +5,7 @@ import urllib.parse
 
 from json import dumps as json_dumps
 from pathlib import Path
+from PIL import Image
 from zlib import crc32
 
 from .utils import remove_superficial_options
@@ -14,17 +14,7 @@ from .utils import remove_superficial_options
 logger = logging.getLogger("recitale." + __name__)
 
 
-class ImageCommon:
-    @property
-    def ratio(self):
-        # For when BaseImage.ratio is called before BaseImage.copy() is.
-        if not hasattr(self, "size"):
-            self.size = imagesize.get(self.filepath)
-        width, height = self.size
-        return width / height
-
-
-class Thumbnail(ImageCommon):
+class Thumbnail:
     def __init__(self, base_filepath, base_id, size):
         self.filepath = self.__filepath(base_filepath, base_id, size)
         self.size = size
@@ -42,10 +32,11 @@ class Thumbnail(ImageCommon):
         return p.parent / (p.stem + suffix)
 
 
-class BaseImage(ImageCommon):
+class BaseImage:
     re_rsz = re.compile(r"^(\d+)%$")
 
     def __init__(self, options, global_options):
+        # Rotation applied to self.size, self.copysize dimensions already
         self.copysize = None
         self.thumbnails = dict()
         self.options = global_options.copy()
@@ -59,11 +50,9 @@ class BaseImage(ImageCommon):
 
     def copy(self):
         if not self.copysize:
-            # No need to get image size if .ratio() was called before .copy()
-            if not hasattr(self, "size"):
-                self.size = imagesize.get(self.filepath)
-
+            self._init_size()
             width, height = self.size
+
             if self.resize:
                 match = BaseImage.re_rsz.match(str(self.resize))
                 if not match:
@@ -85,6 +74,32 @@ class BaseImage(ImageCommon):
     def thumbnail(self, size):
         thumbnail = Thumbnail(self.filepath, self.chksum_opt, size)
         return urllib.parse.quote(self._add_thumbnail(thumbnail).filepath.name)
+
+    @property
+    def ratio(self):
+        self._init_size()
+
+        return self.size[0] / self.size[1]
+
+    def _init_size(self):
+        if hasattr(self, "size"):
+            return
+
+        im = Image.open(self.filepath)
+        self.size = im.size
+
+        rotated = False
+
+        if not self.options.get("auto-orient", False):
+            return
+
+        exif = im.getexif()
+        if not exif:
+            return
+
+        rotated = exif.get(0x0112, 1) in {5, 6, 7, 8}
+        if rotated:
+            self.size = (self.size[1], self.size[0])
 
 
 # TODO: add support for looking into parent directories (name: ../other_gallery/pic.jpg)
