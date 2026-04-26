@@ -59,8 +59,11 @@ class BaseImage(ImageCommon):
 
     def copy(self):
         if not self.copysize:
-            width, height = imagesize.get(self.filepath)
+            # No need to get image size if .ratio() was called before .copy()
+            if not hasattr(self, "size"):
+                self.size = imagesize.get(self.filepath)
 
+            width, height = self.size
             if self.resize:
                 match = BaseImage.re_rsz.match(str(self.resize))
                 if not match:
